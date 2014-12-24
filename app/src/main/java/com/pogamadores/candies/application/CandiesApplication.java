@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.pogamadores.candies.database.CandieSQLiteDataSource;
 import com.pogamadores.candies.service.BeaconDiscoverService;
 import com.pogamadores.candies.util.Util;
 
@@ -17,6 +18,7 @@ import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 public class CandiesApplication extends Application {
 
     private static final String UNBIND_FLAG = "UNBIND_FLAG";
+    private CandieSQLiteDataSource dataSource;
     private static CandiesApplication app;
 
     @SuppressWarnings({"FieldCanBeLocal", "UnusedDeclaration"})
@@ -30,12 +32,20 @@ public class CandiesApplication extends Application {
         app = this;
         backgroundPowerSaver = new BackgroundPowerSaver(app);
         beaconManager = BeaconManager.getInstanceForApplication(app);
-        if(!Util.isServiceRunning(BeaconDiscoverService.class, app))
-            startService(new Intent(app, BeaconDiscoverService.class));
+        dataSource = new CandieSQLiteDataSource(app);
+        if(!Util.isServiceRunning(BeaconDiscoverService.class, getApplicationContext()))
+            startService(new Intent(getApplicationContext(), BeaconDiscoverService.class));
     }
 
     public static CandiesApplication get() {
         return app;
+    }
+
+    public static CandieSQLiteDataSource getDatasource() {
+        if(app == null)
+            return null;
+        else
+            return app.dataSource;
     }
 
     public BeaconManager getBeaconManager() {

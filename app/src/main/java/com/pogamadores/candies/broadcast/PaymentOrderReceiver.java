@@ -3,9 +3,12 @@ package com.pogamadores.candies.broadcast;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
-import com.pogamadores.candies.R;
+import com.pogamadores.candies.application.CandiesApplication;
+import com.pogamadores.candies.database.CandieSQLiteDataSource;
+import com.pogamadores.candies.domain.Token;
+import com.pogamadores.candies.service.PaymentService;
+import com.pogamadores.candies.ui.activity.MainActivity;
 import com.pogamadores.candies.util.IntentParameters;
 
 /**
@@ -18,8 +21,23 @@ public class PaymentOrderReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if(intent != null && intent.hasExtra(IntentParameters.UUID)) {
-            //TODO: Perform the payment action
-            Toast.makeText(context, R.string.action_purchase, Toast.LENGTH_SHORT).show();
+            CandieSQLiteDataSource dataSource = CandiesApplication.getDatasource();
+
+            if(dataSource != null) {
+                Token token = dataSource.getToken();
+                if(token != null) {
+                    Intent serviceIntent = new Intent(context, PaymentService.class);
+                    serviceIntent.putExtras(intent.getExtras());
+                    serviceIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startService(serviceIntent);
+                    return;
+                }
+            }
+
+            Intent webIntent = new Intent(context, MainActivity.class);
+            webIntent.putExtras(intent.getExtras());
+            webIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(webIntent);
         }
     }
 }

@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="action_settings">Settings</string>
 
     <!-- Beacon configuration. Leave the value empty for generic search -->
-    <!--suppress CheckTagEmptyBody -->
+    <!-- suppress CheckTagEmptyBody -->
     <string name="uuid" translatable="false"></string>
-    <!--suppress CheckTagEmptyBody -->
+    <!-- suppress CheckTagEmptyBody -->
     <string name="major" translatable="false"></string>
-    <!--suppress CheckTagEmptyBody -->
+    <!-- suppress CheckTagEmptyBody -->
     <string name="minor" translatable="false"></string>
-
     <string name="notification_generic_title">Candy</string>
     <string name="notification_generic_message">There is a candy machine close to you! Enjoy it!</string>
     <string name="action_purchase">Purchase</string>
     <string name="message_machine_close">Machine close to you</string>
     <string name="message_not_close_machine">Search for a candy machine</string>
+    <string name="title_activity_permission">PermissionActivity</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>
