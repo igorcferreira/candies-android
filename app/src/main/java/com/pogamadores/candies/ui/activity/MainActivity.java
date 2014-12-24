@@ -6,9 +6,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.pogamadores.candies.R;
+import com.pogamadores.candies.database.CandieSQLiteDataSource;
 import com.pogamadores.candies.ui.fragment.MainFragment;
 
 public class MainActivity extends ActionBarActivity {
+
+    private CandieSQLiteDataSource dataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +22,8 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new MainFragment())
                     .commit();
         }
+
+        dataSource = new CandieSQLiteDataSource(getApplicationContext());
     }
 
     @Override
