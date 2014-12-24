@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Doces</string>
+    <string name="action_purchase">Comprar</string>
+    <string name="action_settings">Configurações</string>
+    <string name="notification_generic_message">Há uma máquina de doces próximo! Aproveite!</string>
+    <string name="notification_generic_title">Doce</string>
+    <string name="message_machine_close">Há uma máquina próximo a você</string>
+    <string name="message_not_close_machine">Não há uma máquina próximo a você</string>
+</resources>
