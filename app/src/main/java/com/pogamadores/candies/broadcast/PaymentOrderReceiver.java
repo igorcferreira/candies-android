@@ -8,7 +8,7 @@ import com.pogamadores.candies.application.CandiesApplication;
 import com.pogamadores.candies.database.CandieSQLiteDataSource;
 import com.pogamadores.candies.domain.Token;
 import com.pogamadores.candies.service.PaymentService;
-import com.pogamadores.candies.ui.activity.MainActivity;
+import com.pogamadores.candies.ui.activity.PermissionActivity;
 import com.pogamadores.candies.util.IntentParameters;
 
 /**
@@ -34,7 +34,7 @@ public class PaymentOrderReceiver extends BroadcastReceiver {
                 }
             }
 
-            Intent webIntent = new Intent(context, MainActivity.class);
+            Intent webIntent = new Intent(context, PermissionActivity.class);
             webIntent.putExtras(intent.getExtras());
             webIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(webIntent);
