@@ -17,11 +17,18 @@ android {
             versionNameSuffix "-debug"
             minifyEnabled false
             debuggable true
+            jniDebuggable true
+            renderscriptDebuggable true
+            zipAlignEnabled false
         }
         release {
             minifyEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            jniDebuggable false
+            renderscriptDebuggable false
+            pseudoLocalesEnabled true
+            zipAlignEnabled true
         }
     }
 }
