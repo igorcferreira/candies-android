@@ -17,11 +17,18 @@ android {
             versionNameSuffix "-debug"
             minifyEnabled false
             debuggable true
+            jniDebuggable true
+            renderscriptDebuggable true
+            zipAlignEnabled false
         }
         release {
             minifyEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            jniDebuggable false
+            renderscriptDebuggable false
+            pseudoLocalesEnabled true
+            zipAlignEnabled true
         }
     }
 }
@@ -35,4 +42,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.google.android.gms:play-services:6.5.87'
+    compile 'com.squareup.okhttp:okhttp:2.1.0'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.1.0'
+    compile 'com.squareup.okio:okio:1.1.0'
 }

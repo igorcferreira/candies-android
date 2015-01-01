@@ -10,6 +10,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.pogamadores.candies.database.CandieSQLiteDataSource;
 import com.pogamadores.candies.service.BeaconDiscoverService;
+import com.pogamadores.candies.util.OkHttpStack;
 import com.pogamadores.candies.util.Util;
 
 import org.altbeacon.beacon.BeaconManager;
@@ -76,7 +77,7 @@ public class CandiesApplication extends Application {
      */
     public RequestQueue getQueue() {
         if(queue == null) {
-            queue = Volley.newRequestQueue(app);
+            queue = Volley.newRequestQueue(app, new OkHttpStack());
         }
         return queue;
     }
