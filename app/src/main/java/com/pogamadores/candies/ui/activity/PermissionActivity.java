@@ -1,7 +1,7 @@
 package com.pogamadores.candies.ui.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -17,7 +17,7 @@ import com.pogamadores.candies.domain.Token;
 import com.pogamadores.candies.request.GsonRequest;
 import com.pogamadores.candies.util.WebServerHelper;
 
-public class PermissionActivity extends ActionBarActivity {
+public class PermissionActivity extends Activity {
 
     private WebView webContent;
     private ProgressBar progress;
