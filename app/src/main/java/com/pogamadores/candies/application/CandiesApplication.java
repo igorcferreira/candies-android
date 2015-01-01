@@ -86,7 +86,7 @@ public class CandiesApplication extends Application {
      * @param request   A valid Volley {@link com.android.volley.Request}
      */
     public void addRequestToQueue(Request<?> request) {
-        getQueue().add(request);
+        addRequestToQueue(request, CandiesApplication.class.getSimpleName());
     }
 
     /**
@@ -99,6 +99,15 @@ public class CandiesApplication extends Application {
     public void addRequestToQueue(Request<?> request, String tag) {
         request.setTag(tag);
         getQueue().add(request);
+    }
+
+    public void stopAllRequests() {
+        getQueue().cancelAll(new RequestQueue.RequestFilter() {
+            @Override
+            public boolean apply(Request<?> request) {
+                return true;
+            }
+        });
     }
 
     /**

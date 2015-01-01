@@ -32,10 +32,12 @@
 
         <service
             android:name=".service.BeaconDiscoverService"
+            android:enabled="true"
             android:exported="false" />
 
         <receiver
             android:name=".broadcast.PaymentOrderReceiver"
+            android:enabled="true"
             android:exported="false" />
         <receiver
             android:name=".broadcast.StartServiceReceiver"

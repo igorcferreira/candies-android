@@ -58,6 +58,9 @@ public class MainFragment extends Fragment {
             }
         });
 
+        mTvInformation.setText(getString(R.string.message_machine_close));
+        mBtPurchase.setVisibility(View.VISIBLE);
+
         return rootView;
     }
 
