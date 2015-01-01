@@ -59,7 +59,7 @@ public class CandieSQLiteDataSource
     }
 
     public boolean saveToken(Token token) {
-        boolean successfull = false;
+        boolean successful = false;
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
         try {
@@ -68,15 +68,17 @@ public class CandieSQLiteDataSource
                     null,
                     token.toContentValues()
             );
-            if(insertId >= 0)
-                successfull = true;
+            if(insertId >= 0) {
+                successful = true;
+                db.setTransactionSuccessful();
+            }
         } catch (Exception ex) {
-            successfull = false;
+            successful = false;
         } finally {
             db.endTransaction();
         }
 
-        return successfull;
+        return successful;
     }
 
     public boolean updateToken(Token token) {

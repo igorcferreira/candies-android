@@ -18,6 +18,7 @@ import com.pogamadores.candies.broadcast.PaymentOrderReceiver;
 public class Util
 {
     private static final int NOTIFICATION_ID = 123456;
+    public static final double PRODUCT_DEFAULT_VALUE = 10.5f;
 
     public static void dispatchNotification(Context context, String uuid, String major, String minor, @DrawableRes int productImage)
     {

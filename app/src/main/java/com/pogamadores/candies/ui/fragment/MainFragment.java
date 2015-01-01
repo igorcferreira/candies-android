@@ -16,8 +16,9 @@ import android.widget.TextView;
 
 import com.pogamadores.candies.R;
 import com.pogamadores.candies.application.CandiesApplication;
-import com.pogamadores.candies.broadcast.PaymentOrderReceiver;
 import com.pogamadores.candies.service.BeaconDiscoverService;
+import com.pogamadores.candies.service.PaymentService;
+import com.pogamadores.candies.ui.activity.PermissionActivity;
 import com.pogamadores.candies.util.IntentParameters;
 
 import org.altbeacon.beacon.Beacon;
@@ -51,10 +52,17 @@ public class MainFragment extends Fragment {
                     infoBundle.putString(IntentParameters.MAJOR, beacon.getId2().toString());
                     infoBundle.putString(IntentParameters.MINOR, beacon.getId3().toString());
                 }
-                Intent purchaseIntent = new Intent(getActivity().getApplicationContext(), PaymentOrderReceiver.class);
-                if(infoBundle != null)
-                    purchaseIntent.putExtras(infoBundle);
-                getActivity().sendBroadcast(purchaseIntent);
+                if(CandiesApplication.getDatasource().getToken() == null) {
+                    Intent permissionIntent = new Intent(getActivity(), PermissionActivity.class);
+                    if(infoBundle != null)
+                        permissionIntent.putExtras(infoBundle);
+                    getActivity().startActivity(permissionIntent);
+                }else {
+                    Intent purchaseIntent = new Intent(getActivity().getApplicationContext(), PaymentService.class);
+                    if (infoBundle != null)
+                        purchaseIntent.putExtras(infoBundle);
+                    getActivity().startService(purchaseIntent);
+                }
             }
         });
 
