@@ -13,6 +13,7 @@ import com.pogamadores.candies.service.BeaconDiscoverService;
 import com.pogamadores.candies.util.OkHttpStack;
 import com.pogamadores.candies.util.Util;
 
+import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
@@ -26,6 +27,15 @@ public class CandiesApplication extends Application {
     private BackgroundPowerSaver backgroundPowerSaver;
     private BeaconManager beaconManager;
     private RequestQueue queue;
+    private Beacon beacon;
+
+    public Beacon getBeacon() {
+        return beacon;
+    }
+
+    public void setBeacon(Beacon beacon) {
+        this.beacon = beacon;
+    }
 
     @Override
     public void onCreate() {

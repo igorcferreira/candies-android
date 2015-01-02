@@ -42,6 +42,7 @@ public class PaymentService extends Service {
                                 if(paymentStepsListener != null)
                                     paymentStepsListener.onPaymentFinished(token, Util.PRODUCT_DEFAULT_VALUE, false,response.getMessage());
                             }
+                            stopSelf();
                         }
                     },
                     new Response.ErrorListener() {
@@ -51,6 +52,7 @@ public class PaymentService extends Service {
                             Toast.makeText(getApplicationContext(), "Error on payment", Toast.LENGTH_SHORT).show();
                             if(paymentStepsListener != null)
                                 paymentStepsListener.onPaymentFinished(token, Util.PRODUCT_DEFAULT_VALUE, false, error.getMessage());
+                            stopSelf();
                         }
                     }
             );

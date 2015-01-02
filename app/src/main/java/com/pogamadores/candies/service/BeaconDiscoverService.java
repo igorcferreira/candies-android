@@ -35,7 +35,7 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
     private List<DiscoverListener> listenerList = new ArrayList<>();
     private List<DiscoverListener> listenerToRemove;
     private BeaconManager beaconManager;
-    private Beacon beacon = null;
+    private CandiesApplication application;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -45,6 +45,8 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             beaconManager.getBeaconParsers().add(new BeaconParser().
                     setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
             beaconManager.bind(this);
+            if(application == null)
+                application = CandiesApplication.get();
         }
         return START_STICKY;
     }
@@ -60,8 +62,8 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                 listenerList = new ArrayList<>();
             if (listenerList.indexOf(listener) < 0)
                 listenerList.add(listener);
-            if(beacon != null)
-                listener.didDiscoverBeacon(beacon);
+            if(application.getBeacon() != null)
+                listener.didDiscoverBeacon(application.getBeacon());
         }
     }
 
@@ -79,7 +81,7 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
 
     public Beacon getBeacon()
     {
-        return beacon;
+        return application.getBeacon();
     }
 
     @Override
@@ -88,10 +90,10 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 for (Beacon rangedBeacon : beacons) {
-                    if(beacon == null) {
+                    if(application.getBeacon() == null) {
                         if(rangedBeacon.getDistance() > 2.f)
                             continue;
-                        beacon = rangedBeacon;
+                        application.setBeacon(rangedBeacon);
                         onIteration = true;
                         if(listenerList != null) {
                             for (DiscoverListener listener : listenerList)
@@ -117,11 +119,11 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                         }
                         CandiesApplication.get().setFromUnbind(false);
                         break;
-                    } else if(rangedBeacon.getId1().toString().equals(beacon.getId1().toString())) {
+                    } else if(rangedBeacon.getId1().toString().equals(application.getBeacon().getId1().toString())) {
                         if(rangedBeacon.getDistance() < 2.f)
-                            beacon = rangedBeacon;
+                            application.setBeacon(rangedBeacon);
                         else
-                            beacon = null;
+                            application.setBeacon(null);
                         break;
                     }
                 }
@@ -133,8 +135,8 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             public void didEnterRegion(Region region) {}
             @Override
             public void didExitRegion(Region region) {
-                if(region.getId1() != null && region.getId1().toString().equals(beacon.getId1().toString())) {
-                    beacon = null;
+                if(region.getId1() != null && region.getId1().toString().equals(application.getBeacon().getId1().toString())) {
+                    application.setBeacon(null);
                 }
             }
             @Override
