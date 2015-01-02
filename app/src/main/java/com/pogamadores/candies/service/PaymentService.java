@@ -18,13 +18,14 @@ import com.pogamadores.candies.util.WebServerHelper;
 public class PaymentService extends Service {
 
     private LocalBinder mBinder = new LocalBinder();
+    private PaymentStepsListener paymentStepsListener;
 
     public PaymentService() {}
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Toast.makeText(getApplicationContext(), "Pagamento", Toast.LENGTH_SHORT).show();
-        Token token = CandiesApplication.getDatasource().getToken();
+        final Token token = CandiesApplication.getDatasource().getToken();
         if(token != null) {
             WebServerHelper.performNewPayment(
                     token.getToken(),
@@ -34,8 +35,12 @@ public class PaymentService extends Service {
                         public void onResponse(NewTransaction response) {
                             if (response.isSuccessfull()) {
                                 Toast.makeText(getApplicationContext(), "Sucesso", Toast.LENGTH_SHORT).show();
+                                if(paymentStepsListener != null)
+                                    paymentStepsListener.onPaymentFinished(token, Util.PRODUCT_DEFAULT_VALUE, true, response.getMessage());
                             } else {
                                 Toast.makeText(getApplicationContext(), response.getMessage(), Toast.LENGTH_SHORT).show();
+                                if(paymentStepsListener != null)
+                                    paymentStepsListener.onPaymentFinished(token, Util.PRODUCT_DEFAULT_VALUE, false,response.getMessage());
                             }
                         }
                     },
@@ -44,9 +49,13 @@ public class PaymentService extends Service {
                         public void onErrorResponse(VolleyError error) {
                             Log.e(CandiesApplication.class.getSimpleName(), Log.getStackTraceString(error));
                             Toast.makeText(getApplicationContext(), "Error on payment", Toast.LENGTH_SHORT).show();
+                            if(paymentStepsListener != null)
+                                paymentStepsListener.onPaymentFinished(token, Util.PRODUCT_DEFAULT_VALUE, false, error.getMessage());
                         }
                     }
             );
+            if(paymentStepsListener != null)
+                paymentStepsListener.onPaymentStarted(token, Util.PRODUCT_DEFAULT_VALUE);
             return START_STICKY;
         } else
             return START_NOT_STICKY;
@@ -55,6 +64,15 @@ public class PaymentService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    public void setPaymentStepsListener(PaymentStepsListener paymentStepsListener) {
+        this.paymentStepsListener = paymentStepsListener;
+    }
+
+    public interface PaymentStepsListener {
+        public void onPaymentStarted(Token token, double value);
+        public void onPaymentFinished(Token token, double value, boolean successful, String message);
     }
 
     public class LocalBinder extends Binder {

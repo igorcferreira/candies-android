@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.pogamadores.candies.R;
 import com.pogamadores.candies.application.CandiesApplication;
+import com.pogamadores.candies.domain.Token;
 import com.pogamadores.candies.service.BeaconDiscoverService;
 import com.pogamadores.candies.service.PaymentService;
 import com.pogamadores.candies.ui.activity.PermissionActivity;
@@ -30,7 +31,8 @@ public class MainFragment extends Fragment {
 
     private TextView mTvInformation;
     private Button mBtPurchase;
-    private BeaconDiscoverService service;
+    private BeaconDiscoverService beaconService;
+    private PaymentService paymentService;
 
     public MainFragment() {}
 
@@ -44,8 +46,8 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Bundle infoBundle = null;
-                if(service != null && service.getBeacon() != null) {
-                    Beacon beacon = service.getBeacon();
+                if(beaconService != null && beaconService.getBeacon() != null) {
+                    Beacon beacon = beaconService.getBeacon();
 
                     infoBundle = new Bundle();
                     infoBundle.putString(IntentParameters.UUID, beacon.getId1().toString());
@@ -77,7 +79,12 @@ public class MainFragment extends Fragment {
         super.onStart();
         getActivity().bindService(
                 new Intent(getActivity().getApplicationContext(), BeaconDiscoverService.class),
-                mConnection,
+                mBeaconConnection,
+                Context.BIND_AUTO_CREATE
+        );
+        getActivity().bindService(
+                new Intent(getActivity().getApplicationContext(), PaymentService.class),
+                mPaymentConnection,
                 Context.BIND_AUTO_CREATE
         );
     }
@@ -85,21 +92,37 @@ public class MainFragment extends Fragment {
     @Override
     public void onStop() {
         CandiesApplication.get().setFromUnbind(true);
-        getActivity().unbindService(mConnection);
+        getActivity().unbindService(mBeaconConnection);
+        getActivity().unbindService(mPaymentConnection);
         super.onStop();
     }
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+
+    private ServiceConnection mPaymentConnection = new ServiceConnection() {
         @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            BeaconDiscoverService.BeaconDiscoverBinder beaconDiscoverBinder = (BeaconDiscoverService.BeaconDiscoverBinder)binder;
-            service = beaconDiscoverBinder.getService();
-            service.addDiscoverListener(discoverListener);
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            PaymentService.LocalBinder binder = (PaymentService.LocalBinder)service;
+            paymentService = binder.getService();
+            paymentService.setPaymentStepsListener(paymentStepsListener);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            service = null;
+            paymentService = null;
+        }
+    };
+
+    private ServiceConnection mBeaconConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            BeaconDiscoverService.BeaconDiscoverBinder beaconDiscoverBinder = (BeaconDiscoverService.BeaconDiscoverBinder)binder;
+            beaconService = beaconDiscoverBinder.getService();
+            beaconService.addDiscoverListener(discoverListener);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            beaconService = null;
             if(getActivity() != null) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -108,6 +131,18 @@ public class MainFragment extends Fragment {
                     }
                 });
             }
+        }
+    };
+
+    private PaymentService.PaymentStepsListener paymentStepsListener = new PaymentService.PaymentStepsListener() {
+        @Override
+        public void onPaymentStarted(Token token, double value) {
+
+        }
+
+        @Override
+        public void onPaymentFinished(Token token, double value, boolean successful, String message) {
+
         }
     };
 
@@ -122,8 +157,8 @@ public class MainFragment extends Fragment {
                         mBtPurchase.setVisibility(View.VISIBLE);
                     }
                 });
-                if(service != null)
-                    service.removeDiscoverListener(this);
+                if(beaconService != null)
+                    beaconService.removeDiscoverListener(this);
             }
         }
     };

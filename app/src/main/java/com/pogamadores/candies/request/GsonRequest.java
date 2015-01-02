@@ -3,6 +3,7 @@ package com.pogamadores.candies.request;
 import android.net.Uri;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -28,6 +29,7 @@ public class GsonRequest<T> extends Request<T> {
 
     public GsonRequest(int method, Map<String, String> headers, String url, String body, Response.Listener<T> listener, Response.ErrorListener errorListener, Class<T> clazz) {
         super(method, url, errorListener);
+        setRetryPolicy(new DefaultRetryPolicy(3000, 3, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mListener = listener;
         mClass = clazz;
         mHeaders = (headers != null?headers:GsonRequest.getDefaultHeaders());
