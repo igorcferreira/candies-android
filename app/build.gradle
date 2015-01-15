@@ -22,7 +22,7 @@ android {
             zipAlignEnabled false
         }
         release {
-            minifyEnabled true
+            minifyEnabled false
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             jniDebuggable false
@@ -31,10 +31,15 @@ android {
             zipAlignEnabled true
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    wearApp project(':candies')
     //noinspection GradleDynamicVersion
     compile 'org.altbeacon:android-beacon-library:2+@aar'
     compile 'com.mcxiaoke.volley:library:1.0.9'
