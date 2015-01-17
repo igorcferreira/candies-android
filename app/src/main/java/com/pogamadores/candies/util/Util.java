@@ -7,20 +7,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.R;
 import com.pogamadores.candies.broadcast.PaymentOrderReceiver;
 
+import org.altbeacon.beacon.Beacon;
+
 public class Util
 {
-    private static final int NOTIFICATION_ID = 123456;
+    public static final int NOTIFICATION_ID = 123456;
     public static final double PRODUCT_DEFAULT_VALUE = 10.5f;
 
-    public static void dispatchNotification(Context context, String uuid, String major, String minor, @DrawableRes int productImage)
+    public static void dispatchNotification(Context context, String uuid, String major, String minor, int productImage)
     {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), productImage);
         dispatchNotification(context, uuid, major, minor, bitmap);
@@ -43,12 +48,9 @@ public class Util
                 purchaseIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
 
-        NotificationCompat.BigPictureStyle style = new NotificationCompat.BigPictureStyle();
-        style.bigPicture(productImage);
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setStyle(style)
+                .setLocalOnly(true)
                 .setAutoCancel(true)
                 .setCategory(NotificationCompat.CATEGORY_PROMO)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -56,16 +58,7 @@ public class Util
                 .setContentText(context.getString(R.string.notification_generic_message))
                 .addAction(R.drawable.ic_launcher, context.getString(R.string.action_purchase), purchasePendingIntent);
 
-        Notification itemPicture = new NotificationCompat.Builder(context)
-                .setStyle(style)
-                .extend(new NotificationCompat.WearableExtender().setHintShowBackgroundOnly(true))
-                .build();
-
-        Notification notification = new NotificationCompat.WearableExtender()
-                .addPage(itemPicture)
-                .extend(builder)
-                .build();
-
+        Notification notification = builder.build();
         notification.defaults |= Notification.DEFAULT_ALL;
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(context);
@@ -80,5 +73,20 @@ public class Util
             }
         }
         return false;
+    }
+
+    public static void sendMessage(GoogleApiClient client, String path, Beacon targetBeacon) {
+        Uri.Builder builder = new Uri.Builder()
+                .scheme("candie")
+                .authority("beacon")
+                .appendQueryParameter("uuid",targetBeacon.getId1().toString())
+                .appendQueryParameter("major",targetBeacon.getId2().toString())
+                .appendQueryParameter("minor",targetBeacon.getId3().toString());
+
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
+        putDataMapRequest.getDataMap().putLong("DataStamp", System.currentTimeMillis());
+        putDataMapRequest.getDataMap().putString("content",builder.toString());
+
+        Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest());
     }
 }

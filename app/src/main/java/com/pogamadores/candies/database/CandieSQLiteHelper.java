@@ -6,9 +6,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.pogamadores.candies.domain.Token;
 
-/**
- * Created by igorcferreira on 12/24/14.
- */
 public class CandieSQLiteHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "candies.db";

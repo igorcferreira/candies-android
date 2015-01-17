@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Doces</string>
+    <string name="hello_round">Olá mundo redondo!</string>
+    <string name="hello_square">Olá mundo quadrado!</string>
+    <string name="action_purchase">Comprar</string>
+    <string name="notification_generic_message">Há uma máquina de doces próximo! Aproveite!</string>
+    <string name="notification_generic_title">Doce</string>
+</resources>

@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,6 +28,9 @@ public class PaymentService extends Service {
         Toast.makeText(getApplicationContext(), "Pagamento", Toast.LENGTH_SHORT).show();
         final Token token = CandiesApplication.getDatasource().getToken();
         if(token != null) {
+
+            NotificationManagerCompat.from(getApplicationContext()).cancel(Util.NOTIFICATION_ID);
+
             WebServerHelper.performNewPayment(
                     token.getToken(),
                     Util.PRODUCT_DEFAULT_VALUE,

@@ -6,9 +6,6 @@ import android.net.Uri;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by igorcferreira on 12/24/14.
- */
 public class Token
 {
     @SerializedName("token")

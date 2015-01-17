@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.pogamadores.candies.service.BeaconDiscoverService;
 import com.pogamadores.candies.service.PaymentService;
 import com.pogamadores.candies.ui.activity.PermissionActivity;
 import com.pogamadores.candies.util.IntentParameters;
+import com.pogamadores.candies.util.Util;
 
 import org.altbeacon.beacon.Beacon;
 
@@ -65,6 +67,8 @@ public class MainFragment extends Fragment {
                         purchaseIntent.putExtras(infoBundle);
                     getActivity().startService(purchaseIntent);
                 }
+
+                NotificationManagerCompat.from(getActivity().getApplicationContext()).cancel(Util.NOTIFICATION_ID);
             }
         });
 

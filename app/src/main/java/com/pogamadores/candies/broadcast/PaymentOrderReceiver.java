@@ -3,6 +3,7 @@ package com.pogamadores.candies.broadcast;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.pogamadores.candies.application.CandiesApplication;
 import com.pogamadores.candies.database.CandieSQLiteDataSource;
@@ -10,6 +11,7 @@ import com.pogamadores.candies.domain.Token;
 import com.pogamadores.candies.service.PaymentService;
 import com.pogamadores.candies.ui.activity.PermissionActivity;
 import com.pogamadores.candies.util.IntentParameters;
+import com.pogamadores.candies.util.Util;
 
 /**
  * This class are responsible to perform the payment for the item
@@ -20,6 +22,9 @@ public class PaymentOrderReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        NotificationManagerCompat.from(context).cancel(Util.NOTIFICATION_ID);
+
         if(intent != null && intent.hasExtra(IntentParameters.UUID)) {
             CandieSQLiteDataSource dataSource = CandiesApplication.getDatasource();
 

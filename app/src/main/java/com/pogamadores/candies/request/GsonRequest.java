@@ -16,9 +16,6 @@ import com.pogamadores.candies.util.WebServerHelper;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by igorcferreira on 12/24/14.
- */
 public class GsonRequest<T> extends Request<T> {
 
     private final Gson mGson = new Gson();

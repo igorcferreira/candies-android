@@ -4,9 +4,6 @@ import android.net.Uri;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-/**
- * Created by igorcferreira on 1/1/15.
- */
 public class CandiesWebViewClient extends WebViewClient {
 
     private OnProcessStepListener onProcessStepListener;

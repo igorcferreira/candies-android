@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -21,6 +22,7 @@ import com.pogamadores.candies.domain.Token;
 import com.pogamadores.candies.request.GsonRequest;
 import com.pogamadores.candies.service.PaymentService;
 import com.pogamadores.candies.util.CandiesWebViewClient;
+import com.pogamadores.candies.util.Util;
 import com.pogamadores.candies.util.WebServerHelper;
 
 public class PermissionActivity extends Activity {
@@ -43,6 +45,8 @@ public class PermissionActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+
+        NotificationManagerCompat.from(getApplicationContext()).cancel(Util.NOTIFICATION_ID);
 
         if(savedInstanceState != null)
             receivedExtras = savedInstanceState;

@@ -4,7 +4,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.R;
 import com.pogamadores.candies.application.CandiesApplication;
 import com.pogamadores.candies.util.Util;
@@ -20,12 +24,16 @@ import org.altbeacon.beacon.Region;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The {@link BeaconDiscoverService} will be responsible to look for new beacons and create the
  * notification flow
  */
 public class BeaconDiscoverService extends Service implements BeaconConsumer {
+
+    private static final String TAG = BeaconDiscoverService.class.getSimpleName();
+    private GoogleApiClient mGoogleClient;
 
     private BeaconDiscoverBinder mBinder = new BeaconDiscoverBinder();
 
@@ -54,6 +62,23 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    private void setUpGoogleClientIfNeeded() {
+        if(mGoogleClient == null) {
+            GoogleApiClient googleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Wearable.API)
+                    .build();
+
+            ConnectionResult connectionResult =
+                    googleApiClient.blockingConnect(30, TimeUnit.SECONDS);
+
+            if (!connectionResult.isSuccess()) {
+                Log.e(TAG, "Failed to connect to GoogleApiClient.");
+                return;
+            }
+            mGoogleClient = googleApiClient;
+        }
     }
 
     public void addDiscoverListener(DiscoverListener listener) {
@@ -109,6 +134,8 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                         } else
                             onIteration = false;
                         if(!CandiesApplication.get().isFromUnbind()) {
+                            setUpGoogleClientIfNeeded();
+                            Util.sendMessage(mGoogleClient, "/new/candies/beacon",rangedBeacon);
                             Util.dispatchNotification(
                                     getApplicationContext(),
                                     rangedBeacon.getId1().toString(),

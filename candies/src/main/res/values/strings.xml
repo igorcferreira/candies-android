@@ -4,5 +4,8 @@
     <string name="app_name">Candies</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
+    <string name="action_purchase">Purchase</string>
+    <string name="notification_generic_message">There is a candy machine close to you! Enjoy it!</string>
+    <string name="notification_generic_title">Candy</string>
 
 </resources>
