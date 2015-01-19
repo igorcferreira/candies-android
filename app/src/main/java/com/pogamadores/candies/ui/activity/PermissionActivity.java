@@ -102,6 +102,7 @@ public class PermissionActivity extends Activity {
     private void showWebContentForToken(Token token) {
         this.token = token;
         progress.setVisibility(View.GONE);
+        Log.i("JEFFDEBUG", token.getUrl().toString());
         webContent.loadUrl(token.getUrl().toString());
         webContent.setVisibility(View.VISIBLE);
     }

@@ -11,9 +11,17 @@ import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.pogamadores.candies.R;
+import com.pogamadores.candies.application.CandiesApplication;
 import com.pogamadores.candies.broadcast.PaymentOrderReceiver;
+
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
 
 public class Util
 {
@@ -80,5 +88,41 @@ public class Util
             }
         }
         return false;
+    }
+
+    public static String getPhoneIMEI(Context context)     {
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        return telephonyManager.getDeviceId();
+    }
+
+
+    /**
+     * Sends message to machine via MQTT Protocol
+     * @return results of operation. True if message has been sent or false in failure.
+     */
+    public static boolean sendMessageToMachine(String message)     {
+
+        CandiesApplication app = CandiesApplication.get();
+
+        MqttClient mqttClient = app.getMqttClient();
+
+        boolean retorno = false;
+
+        try {
+            mqttClient.connect();
+            if (mqttClient.isConnected()) {
+                mqttClient.publish("jeffprestes/candies/world", new MqttMessage(message.getBytes()));
+                mqttClient.disconnect();
+                retorno = true;
+            }
+
+        } catch (Exception e) {
+            //TODO: Colocar mensagens no arquivo Strings
+            Toast.makeText(CandiesApplication.get().getApplicationContext(), "Nao foi possivel fazer a comunicacao com a maquina. Erro: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("JEFFDEBUG", "Erro ao enviar mensagem a maquina: " + e.getLocalizedMessage(), e);
+
+        } finally {
+            return retorno;
+        }
     }
 }
