@@ -11,13 +11,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.R;
 import com.pogamadores.candies.application.CandiesApplication;
+import com.pogamadores.candies.broadcast.StartServiceReceiver;
 import com.pogamadores.candies.util.Util;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
-import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
@@ -55,6 +55,7 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             beaconManager.bind(this);
             if(application == null)
                 application = CandiesApplication.get();
+            application.setBeacon(null);
         }
         return START_STICKY;
     }
@@ -115,12 +116,12 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 for (Beacon rangedBeacon : beacons) {
-                    if(application.getBeacon() == null) {
-                        if(rangedBeacon.getDistance() > 2.f)
+                    if (application.getBeacon() == null) {
+                        if (rangedBeacon.getDistance() > 2.f)
                             continue;
                         application.setBeacon(rangedBeacon);
                         onIteration = true;
-                        if(listenerList != null) {
+                        if (listenerList != null) {
                             for (DiscoverListener listener : listenerList)
                                 listener.didDiscoverBeacon(rangedBeacon);
                             onIteration = false;
@@ -133,9 +134,9 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                             }
                         } else
                             onIteration = false;
-                        if(!CandiesApplication.get().isFromUnbind()) {
+                        if (!CandiesApplication.get().isFromUnbind()) {
                             setUpGoogleClientIfNeeded();
-                            Util.sendMessage(mGoogleClient, "/new/candies/beacon",rangedBeacon);
+                            Util.sendMessage(mGoogleClient, "/new/candies/beacon", rangedBeacon);
                             Util.dispatchNotification(
                                     getApplicationContext(),
                                     rangedBeacon.getId1().toString(),
@@ -145,9 +146,10 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                             );
                         }
                         CandiesApplication.get().setFromUnbind(false);
+                        finishService();
                         break;
-                    } else if(rangedBeacon.getId1().toString().equals(application.getBeacon().getId1().toString())) {
-                        if(rangedBeacon.getDistance() < 2.f)
+                    } else if (rangedBeacon.getId1().toString().equals(application.getBeacon().getId1().toString())) {
+                        if (rangedBeacon.getDistance() < 2.f)
                             application.setBeacon(rangedBeacon);
                         else
                             application.setBeacon(null);
@@ -157,26 +159,23 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             }
         });
 
-        beaconManager.setMonitorNotifier(new MonitorNotifier() {
-            @Override
-            public void didEnterRegion(Region region) {}
-            @Override
-            public void didExitRegion(Region region) {
-                if(region.getId1() != null && region.getId1().toString().equals(application.getBeacon().getId1().toString())) {
-                    application.setBeacon(null);
-                }
-            }
-            @Override
-            public void didDetermineStateForRegion(int i, Region region) {}
-        });
         try {
             beaconManager.startRangingBeaconsInRegion(region);
         } catch (Exception ignored) {}
     }
+
+    private void finishService() {
+        Util.scheduleReceiver(getApplicationContext(), StartServiceReceiver.class);
+        try {
+            beaconManager.stopMonitoringBeaconsInRegion(region);
+            beaconManager.unbind(this);
+        } catch (Exception ignored) {}
+        region = null;
+        stopSelf();
+    }
     //endregion
 
     //region Helper classes
-
     public class BeaconDiscoverBinder extends Binder {
         public BeaconDiscoverService getService() {
             return BeaconDiscoverService.this;

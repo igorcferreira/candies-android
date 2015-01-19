@@ -15,9 +15,11 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
+            debuggable true
+            jniDebuggable true
+            renderscriptDebuggable true
+            zipAlignEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            applicationIdSuffix ".debug"
-            versionNameSuffix "-debug"
         }
 
         release {

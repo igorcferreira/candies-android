@@ -15,6 +15,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.R;
 import com.pogamadores.candies.application.CandiesApplication;
 import com.pogamadores.candies.domain.Token;
@@ -35,6 +38,7 @@ public class MainFragment extends Fragment {
     private Button mBtPurchase;
     private BeaconDiscoverService beaconService;
     private PaymentService paymentService;
+    private GoogleApiClient mGoogleClient;
 
     public MainFragment() {}
 
@@ -71,11 +75,52 @@ public class MainFragment extends Fragment {
                 NotificationManagerCompat.from(getActivity().getApplicationContext()).cancel(Util.NOTIFICATION_ID);
             }
         });
+        Button mBtNotificar = (Button)rootView.findViewById(R.id.btNotification);
+        mBtNotificar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mGoogleClient != null) {
+                    Util.sendMessage(mGoogleClient, "/new/candies/beacon", "", "", "");
+                    Util.dispatchNotification(
+                            getActivity().getApplicationContext(),
+                            "",
+                            "",
+                            "",
+                            R.drawable.ic_launcher
+                    );
+                }
+            }
+        });
 
         mTvInformation.setText(getString(R.string.message_machine_close));
         mBtPurchase.setVisibility(View.VISIBLE);
+        mBtNotificar.setVisibility(View.VISIBLE);
+
+        setUpGoogleClientIfNeeded();
 
         return rootView;
+    }
+
+    private void setUpGoogleClientIfNeeded() {
+        if(mGoogleClient == null) {
+            mGoogleClient = new GoogleApiClient.Builder(getActivity().getApplicationContext())
+                    .addApi(Wearable.API)
+                    .build();
+            mGoogleClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                @Override
+                public void onConnected(Bundle bundle) {}
+                @Override
+                public void onConnectionSuspended(int i) {
+                    mGoogleClient = null;
+                }
+            });
+            mGoogleClient.registerConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                @Override
+                public void onConnectionFailed(ConnectionResult connectionResult) {
+                    mGoogleClient = null;
+                }
+            });
+        }
     }
 
     @Override

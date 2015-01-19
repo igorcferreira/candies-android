@@ -1,6 +1,7 @@
 package com.pogamadores.candies.util;
 
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -25,6 +26,8 @@ import com.pogamadores.candies.broadcast.PaymentOrderReceiver;
 import org.altbeacon.beacon.Beacon;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.util.Calendar;
 
 public class Util
 {
@@ -81,19 +84,24 @@ public class Util
         return false;
     }
 
-    public static void sendMessage(GoogleApiClient client, String path, Beacon targetBeacon) {
+    public static void sendMessage(GoogleApiClient client, String path, String uuid, String major, String minor) {
         Uri.Builder builder = new Uri.Builder()
                 .scheme("candie")
                 .authority("beacon")
-                .appendQueryParameter("uuid",targetBeacon.getId1().toString())
-                .appendQueryParameter("major",targetBeacon.getId2().toString())
-                .appendQueryParameter("minor",targetBeacon.getId3().toString());
+                .appendQueryParameter("uuid",uuid)
+                .appendQueryParameter("major",major)
+                .appendQueryParameter("minor",minor);
 
         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
+        putDataMapRequest.getDataMap().putBoolean(String.valueOf(System.currentTimeMillis()),true);
         putDataMapRequest.getDataMap().putLong("DataStamp", System.currentTimeMillis());
         putDataMapRequest.getDataMap().putString("content",builder.toString());
 
         Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest());
+    }
+
+    public static void sendMessage(GoogleApiClient client, String path, Beacon targetBeacon) {
+        sendMessage(client, path, targetBeacon.getId1().toString(), targetBeacon.getId2().toString(), targetBeacon.getId3().toString());
     }
 
     public static String getPhoneIMEI(Context context)     {
@@ -101,6 +109,20 @@ public class Util
         return telephonyManager.getDeviceId();
     }
 
+    public static void scheduleReceiver(Context context, Class receiver) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 5);
+
+        AlarmManager alarmManager = (AlarmManager)context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent receiverIntent = new Intent(context.getApplicationContext(), receiver);
+        PendingIntent receiverPendent = PendingIntent.getBroadcast(context.getApplicationContext(), 0, receiverIntent, 0);
+        alarmManager.set(
+                AlarmManager.RTC_WAKEUP,
+                calendar.getTimeInMillis(),
+                receiverPendent
+        );
+    }
 
     /**
      * Sends message to machine via MQTT Protocol
