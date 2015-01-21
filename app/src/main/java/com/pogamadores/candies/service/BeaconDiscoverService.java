@@ -88,8 +88,8 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                 listenerList = new ArrayList<>();
             if (listenerList.indexOf(listener) < 0)
                 listenerList.add(listener);
-            if(application.getBeacon() != null)
-                listener.didDiscoverBeacon(application.getBeacon());
+            if(CandiesApplication.get().getBeacon() != null)
+                listener.didDiscoverBeacon(CandiesApplication.get().getBeacon());
         }
     }
 
@@ -107,7 +107,7 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
 
     public Beacon getBeacon()
     {
-        return application.getBeacon();
+        return CandiesApplication.get().getBeacon();
     }
 
     @Override

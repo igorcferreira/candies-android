@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -18,10 +17,6 @@ import com.pogamadores.candies.util.Util;
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-
 
 public class CandiesApplication extends Application {
 
@@ -34,13 +29,10 @@ public class CandiesApplication extends Application {
     private BeaconManager beaconManager;
     private RequestQueue queue;
     private Beacon beacon;
-    private MqttClient mqttClient;
-
 
     public Beacon getBeacon() {
         return beacon;
     }
-
 
     public void setBeacon(Beacon beacon) {
         this.beacon = beacon;
@@ -48,23 +40,13 @@ public class CandiesApplication extends Application {
 
     @Override
     public void onCreate() {
-
         super.onCreate();
         app = this;
         backgroundPowerSaver = new BackgroundPowerSaver(app);
         beaconManager = BeaconManager.getInstanceForApplication(app);
         dataSource = new CandieSQLiteDataSource(app);
-
-        if (!Util.isServiceRunning(BeaconDiscoverService.class, getApplicationContext())) {
+        if(!Util.isServiceRunning(BeaconDiscoverService.class, getApplicationContext()))
             startService(new Intent(getApplicationContext(), BeaconDiscoverService.class));
-        }
-
-        try {
-            mqttClient = new MqttClient("tcp://iot.eclipse.org:1883", Util.getPhoneIMEI(app.getApplicationContext()), new MemoryPersistence());
-        } catch (MqttException e) {
-            e.printStackTrace();
-            Log.e("MQTT", e.getMessage(), e);
-        }
     }
 
     public static CandiesApplication get() {
@@ -151,22 +133,5 @@ public class CandiesApplication extends Application {
      */
     public void stopRequest(String tag) {
         getQueue().cancelAll(tag);
-    }
-
-
-    public MqttClient getMqttClient() {
-        if (mqttClient == null)     {
-            try {
-                mqttClient = new MqttClient("tcp://iot.eclipse.org:1883", Util.getPhoneIMEI(app.getApplicationContext()), new MemoryPersistence());
-            } catch (MqttException e) {
-                e.printStackTrace();
-                Log.e("MQTT", e.getMessage(), e);
-            }
-        }
-        return mqttClient;
-    }
-
-    public void setMqttClient(MqttClient mqttClient) {
-        this.mqttClient = mqttClient;
     }
 }

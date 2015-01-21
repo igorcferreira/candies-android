@@ -25,7 +25,9 @@ import com.pogamadores.candies.broadcast.PaymentOrderReceiver;
 
 import org.altbeacon.beacon.Beacon;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.util.Calendar;
 
@@ -84,8 +86,8 @@ public class Util
         return false;
     }
 
-    public static void sendMessage(GoogleApiClient client, String path, String uuid, String major, String minor) {
-        Uri.Builder builder = new Uri.Builder()
+    public static void sendMessage(final GoogleApiClient client, final String path, String uuid, String major, String minor) {
+        final Uri.Builder builder = new Uri.Builder()
                 .scheme("candie")
                 .authority("beacon")
                 .appendQueryParameter("uuid",uuid)
@@ -130,26 +132,35 @@ public class Util
      */
     public static boolean sendMessageToMachine(String message)     {
 
-        CandiesApplication app = CandiesApplication.get();
-
-        MqttClient mqttClient = app.getMqttClient();
-
         boolean retorno = false;
 
+        MqttClient mqttClient = null;
+
         try {
-            mqttClient.connect();
-            if (mqttClient.isConnected()) {
-                mqttClient.publish("jeffprestes/candies/world", new MqttMessage(message.getBytes()));
-                mqttClient.disconnect();
-                retorno = true;
+            mqttClient = new MqttClient("tcp://iot.eclipse.org:1883", Util.getPhoneIMEI(CandiesApplication.get().getApplicationContext()), new MemoryPersistence());
+        } catch (MqttException e) {
+            e.printStackTrace();
+            Log.e("MQTT", e.getMessage(), e);
+        }
+
+        if(mqttClient != null) {
+            try {
+                mqttClient.connect();
+                if (mqttClient.isConnected()) {
+                    mqttClient.publish("jeffprestes/candies/world", new MqttMessage(message.getBytes()));
+                    mqttClient.disconnect();
+                    mqttClient.close();
+                    retorno = true;
+                }
+            } catch (Exception e) {
+                //TODO: Colocar mensagens no arquivo Strings
+                Toast.makeText(CandiesApplication.get().getApplicationContext(), "Nao foi possivel fazer a comunicacao com a maquina. Erro: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("JEFFDEBUG", "Erro ao enviar mensagem a maquina: " + e.getLocalizedMessage(), e);
+
+            } finally {
+                return retorno;
             }
-
-        } catch (Exception e) {
-            //TODO: Colocar mensagens no arquivo Strings
-            Toast.makeText(CandiesApplication.get().getApplicationContext(), "Nao foi possivel fazer a comunicacao com a maquina. Erro: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-            Log.e("JEFFDEBUG", "Erro ao enviar mensagem a maquina: " + e.getLocalizedMessage(), e);
-
-        } finally {
+        } else {
             return retorno;
         }
     }
