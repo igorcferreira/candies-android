@@ -1,6 +1,5 @@
 package com.pogamadores.candies.service;
 
-import android.app.Application;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -17,6 +16,8 @@ import com.pogamadores.candies.domain.Token;
 import com.pogamadores.candies.util.Util;
 import com.pogamadores.candies.util.WebServerHelper;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+
 import java.util.Calendar;
 
 
@@ -26,6 +27,7 @@ public class PaymentService extends Service {
     private LocalBinder mBinder = new LocalBinder();
     private PaymentStepsListener paymentStepsListener;
     private Token token = null;
+
 
     public interface PaymentStepsListener {
         public void onPaymentStarted(Token token, double value);
@@ -47,6 +49,8 @@ public class PaymentService extends Service {
         final Token token = CandiesApplication.getDatasource().getToken();
 
         if(token != null) {
+
+
             NotificationManagerCompat.from(getApplicationContext()).cancel(Util.NOTIFICATION_ID);
             WebServerHelper.performNewPayment (
                     this.getStringToken(),
