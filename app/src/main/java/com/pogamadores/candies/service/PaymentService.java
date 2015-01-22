@@ -16,10 +16,7 @@ import com.pogamadores.candies.domain.Token;
 import com.pogamadores.candies.util.Util;
 import com.pogamadores.candies.util.WebServerHelper;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-
 import java.util.Calendar;
-
 
 
 public class PaymentService extends Service {
