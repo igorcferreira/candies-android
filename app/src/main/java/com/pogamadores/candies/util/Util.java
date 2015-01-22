@@ -24,10 +24,9 @@ import com.pogamadores.candies.application.CandiesApplication;
 import com.pogamadores.candies.broadcast.PaymentOrderReceiver;
 
 import org.altbeacon.beacon.Beacon;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.fusesource.mqtt.client.BlockingConnection;
+import org.fusesource.mqtt.client.MQTT;
+import org.fusesource.mqtt.client.QoS;
 
 import java.util.Calendar;
 
@@ -130,38 +129,44 @@ public class Util
      * Sends message to machine via MQTT Protocol
      * @return results of operation. True if message has been sent or false in failure.
      */
-    public static boolean sendMessageToMachine(String message)     {
+    public static boolean sendMessageToMachine(String message) {
 
         boolean retorno = false;
 
-        MqttClient mqttClient = null;
+        MQTT mqttClient = new MQTT();
+        BlockingConnection conn = null;
 
         try {
-            mqttClient = new MqttClient("tcp://iot.eclipse.org:1883", Util.getPhoneIMEI(CandiesApplication.get().getApplicationContext()), new MemoryPersistence());
-        } catch (MqttException e) {
+
+            //"tcp://iot.eclipse.org:1883", Util.getPhoneIMEI(CandiesApplication.get().getApplicationContext()), new MemoryPersistence()
+            mqttClient.setHost("iot.eclipse.org", 1883);
+            mqttClient.setClientId(Util.getPhoneIMEI(CandiesApplication.get().getApplicationContext()));
+
+            conn = mqttClient.blockingConnection();
+            conn.connect();
+
+            if (conn.isConnected()) {
+                conn.publish("jeffprestes/candies/world", message.getBytes(), QoS.AT_LEAST_ONCE, false);
+                conn.disconnect();
+                retorno = true;
+            }
+
+
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e("MQTT", e.getMessage(), e);
-        }
+            Toast.makeText(CandiesApplication.get().getApplicationContext(), "Nao foi possivel fazer a comunicacao com a maquina. Erro: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("JEFFDEBUG", "Erro ao enviar mensagem a maquina: " + e.getLocalizedMessage(), e);
 
-        if(mqttClient != null) {
-            try {
-                mqttClient.connect();
-                if (mqttClient.isConnected()) {
-                    mqttClient.publish("jeffprestes/candies/world", new MqttMessage(message.getBytes()));
-                    mqttClient.disconnect();
-                    mqttClient.close();
-                    retorno = true;
+        } finally {
+            if (conn != null) {
+                if (conn.isConnected()) {
+                    try {  conn.disconnect();   } catch (Exception e) { }
                 }
-            } catch (Exception e) {
-                //TODO: Colocar mensagens no arquivo Strings
-                Toast.makeText(CandiesApplication.get().getApplicationContext(), "Nao foi possivel fazer a comunicacao com a maquina. Erro: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                Log.e("JEFFDEBUG", "Erro ao enviar mensagem a maquina: " + e.getLocalizedMessage(), e);
-
-            } finally {
-                return retorno;
+                conn = null;
             }
-        } else {
-            return retorno;
         }
+
+        return retorno;
     }
 }
