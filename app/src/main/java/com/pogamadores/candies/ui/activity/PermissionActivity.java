@@ -53,11 +53,23 @@ public class PermissionActivity extends Activity {
         final CandieSQLiteDataSource dataSource = CandiesApplication.getDatasource();
 
         webContent = ((WebView) findViewById(R.id.webContent));
-        webContent.setVisibility(View.GONE);
-        CandiesWebViewClient webViewClient = new CandiesWebViewClient();
+        webContent.setVisibility(View.INVISIBLE);
+        CandiesWebViewClient webViewClient = new CandiesWebViewClient(this);
         webViewClient.setOnProcessStepListener(new CandiesWebViewClient.OnProcessStepListener() {
             @Override
-            public void onProcessFinish() {
+            public void onProcessStarted() {
+                progress.setVisibility(View.GONE);
+                webContent.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onServerLoading() {
+                progress.setVisibility(View.VISIBLE);
+                webContent.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onProcessFinished() {
                 dataSource.saveToken(token);
                 Intent paymentIntent = new Intent(getApplicationContext(), PaymentService.class);
                 if (receivedExtras != null)
@@ -99,9 +111,6 @@ public class PermissionActivity extends Activity {
 
     private void showWebContentForToken(Token token) {
         this.token = token;
-        progress.setVisibility(View.GONE);
-        Log.i("JEFFDEBUG", token.getUrl().toString());
         webContent.loadUrl(token.getUrl().toString());
-        webContent.setVisibility(View.VISIBLE);
     }
 }
