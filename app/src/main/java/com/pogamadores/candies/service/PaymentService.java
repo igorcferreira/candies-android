@@ -46,8 +46,6 @@ public class PaymentService extends Service {
         final Token token = CandiesApplication.getDatasource().getToken();
 
         if(token != null) {
-
-
             NotificationManagerCompat.from(getApplicationContext()).cancel(Util.NOTIFICATION_ID);
             WebServerHelper.performNewPayment (
                     this.getStringToken(),
@@ -61,7 +59,6 @@ public class PaymentService extends Service {
             }
 
             return START_STICKY;
-
         } else {
             return START_NOT_STICKY;
         }
@@ -93,24 +90,43 @@ public class PaymentService extends Service {
         return new Response.Listener<NewTransaction>() {
 
             public void onResponse (NewTransaction response)    {
-
                 if (response.isSuccessfull()) {
-                    Util.sendMessageToMachine("release");
-                    Toast.makeText(getApplicationContext(), "Doce sendo liberado...", Toast.LENGTH_SHORT).show();
-                    if (paymentStepsListener != null)
-                        paymentStepsListener.onPaymentFinished(token, Util.PRODUCT_DEFAULT_VALUE, true, response.getMessage());
 
+                    WebServerHelper.sendMachineOrder(
+                            token,
+                            new Response.Listener<NewTransaction>() {
+
+                                @Override
+                                public void onResponse(NewTransaction response) {
+                                    if(response.isSuccessfull()) {
+                                        finishService("Doce sendo liberado...", true);
+                                    } else {
+                                        finishService("Erro no comando à maquina.", false);
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.e(PaymentService.class.getSimpleName(), "Erro no envio à máquina", error);
+                                    finishService(Log.getStackTraceString(error), false);
+                                }
+                            }
+                    );
                 } else {
-                    Toast.makeText(getApplicationContext(), response.getMessage(), Toast.LENGTH_SHORT).show();
-                    if (paymentStepsListener != null)
-                        paymentStepsListener.onPaymentFinished(token, Util.PRODUCT_DEFAULT_VALUE, false, response.getMessage());
+                    finishService(response.getMessage(), false);
                 }
-                stopSelf();
             }
 
         };
     }
 
+    private void finishService(String message, boolean successful) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+        if (paymentStepsListener != null)
+            paymentStepsListener.onPaymentFinished(token, Util.PRODUCT_DEFAULT_VALUE, successful, message);
+        stopSelf();
+    }
 
     /**
      * Specific error listener for payment webservice call

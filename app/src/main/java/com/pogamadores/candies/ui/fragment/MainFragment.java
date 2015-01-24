@@ -80,7 +80,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(mGoogleClient != null) {
-                    Util.sendMessage(mGoogleClient, "/new/candies/beacon", "", "", "");
+                    Util.informNewBeacon(mGoogleClient, "/new/candies/beacon", "", "", "");
                     Util.dispatchNotification(
                             getActivity().getApplicationContext(),
                             "",
@@ -186,12 +186,13 @@ public class MainFragment extends Fragment {
     private PaymentService.PaymentStepsListener paymentStepsListener = new PaymentService.PaymentStepsListener() {
         @Override
         public void onPaymentStarted(Token token, double value) {
-
+            setUpGoogleClientIfNeeded();
+            Util.sendMessage(mGoogleClient, "/candies/payment/started", "New payment");
         }
 
         @Override
         public void onPaymentFinished(Token token, double value, boolean successful, String message) {
-
+            Util.sendMessage(mGoogleClient, "/candies/payment/finished",(successful?"true":"false"));
         }
     };
 

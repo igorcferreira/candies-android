@@ -48,11 +48,14 @@ public class MessageService extends WearableListenerService {
         setUpGoogleClientIfNeeded();
 
         for(DataEvent event : dataEvents) {
-            if(event.getType() == DataEvent.TYPE_CHANGED &&
-                    event.getDataItem().getUri().getPath().equalsIgnoreCase("/new/candies/beacon")) {
+
+            if(event.getType() == DataEvent.TYPE_CHANGED) {
                 DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
-                Uri message = Uri.parse(dataMapItem.getDataMap().getString("content"));
-                Util.dispatchNotification(getApplicationContext(), message);
+                Log.d(TAG, dataMapItem.getDataMap().getString("content"));
+                if (event.getDataItem().getUri().getPath().equalsIgnoreCase("/new/candies/beacon")) {
+                    Uri message = Uri.parse(dataMapItem.getDataMap().getString("content"));
+                    Util.dispatchNotification(getApplicationContext(), message);
+                }
             }
         }
 

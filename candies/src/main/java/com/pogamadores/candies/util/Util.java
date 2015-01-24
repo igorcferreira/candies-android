@@ -47,7 +47,15 @@ public class Util {
                 .addAction(R.drawable.ic_launcher, context.getString(R.string.action_purchase), pendingIntent);
 
         NotificationManagerCompat.from(context)
-                .notify(NOTIFICATION_ID,builder.build());
+                .notify(NOTIFICATION_ID, builder.build());
+    }
+
+    public static void sendMessage(GoogleApiClient client, String path, String message) {
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
+        putDataMapRequest.getDataMap().putLong("DataStamp", System.currentTimeMillis());
+        putDataMapRequest.getDataMap().putString("content", message);
+
+        Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest());
     }
 
     public static void requestPurchase(GoogleApiClient client, String path, Bundle extras) {
@@ -58,12 +66,7 @@ public class Util {
                     .appendQueryParameter("uuid", extras.getString(IntentParameters.UUID))
                     .appendQueryParameter("major", extras.getString(IntentParameters.MAJOR))
                     .appendQueryParameter("minor", extras.getString(IntentParameters.MINOR));
-
-            PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
-            putDataMapRequest.getDataMap().putLong("DataStamp", System.currentTimeMillis());
-            putDataMapRequest.getDataMap().putString("content", builder.toString());
-
-            Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest());
+            sendMessage(client, path, builder.toString());
         }
     }
 

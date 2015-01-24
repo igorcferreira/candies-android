@@ -85,24 +85,26 @@ public class Util
         return false;
     }
 
-    public static void sendMessage(final GoogleApiClient client, final String path, String uuid, String major, String minor) {
+    public static void sendMessage(GoogleApiClient client, String path, String message) {
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
+        putDataMapRequest.getDataMap().putLong("DataStamp", System.currentTimeMillis());
+        putDataMapRequest.getDataMap().putString("content", message);
+
+        Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest());
+    }
+
+    public static void informNewBeacon(final GoogleApiClient client, final String path, String uuid, String major, String minor) {
         final Uri.Builder builder = new Uri.Builder()
                 .scheme("candie")
                 .authority("beacon")
                 .appendQueryParameter("uuid",uuid)
                 .appendQueryParameter("major",major)
                 .appendQueryParameter("minor",minor);
-
-        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
-        putDataMapRequest.getDataMap().putBoolean(String.valueOf(System.currentTimeMillis()),true);
-        putDataMapRequest.getDataMap().putLong("DataStamp", System.currentTimeMillis());
-        putDataMapRequest.getDataMap().putString("content",builder.toString());
-
-        Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest());
+        sendMessage(client, path, builder.toString());
     }
 
-    public static void sendMessage(GoogleApiClient client, String path, Beacon targetBeacon) {
-        sendMessage(client, path, targetBeacon.getId1().toString(), targetBeacon.getId2().toString(), targetBeacon.getId3().toString());
+    public static void informNewBeacon(GoogleApiClient client, String path, Beacon targetBeacon) {
+        informNewBeacon(client, path, targetBeacon.getId1().toString(), targetBeacon.getId2().toString(), targetBeacon.getId3().toString());
     }
 
     public static String getPhoneIMEI(Context context)     {

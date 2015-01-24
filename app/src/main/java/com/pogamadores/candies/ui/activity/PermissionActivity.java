@@ -19,7 +19,6 @@ import com.pogamadores.candies.R;
 import com.pogamadores.candies.application.CandiesApplication;
 import com.pogamadores.candies.database.CandieSQLiteDataSource;
 import com.pogamadores.candies.domain.Token;
-import com.pogamadores.candies.request.GsonRequest;
 import com.pogamadores.candies.service.PaymentService;
 import com.pogamadores.candies.util.CandiesWebViewClient;
 import com.pogamadores.candies.util.Util;
@@ -35,7 +34,7 @@ public class PermissionActivity extends Activity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(receivedExtras != null)
+        if (receivedExtras != null)
             outState.putAll(receivedExtras);
     }
 
@@ -48,7 +47,7 @@ public class PermissionActivity extends Activity {
 
         NotificationManagerCompat.from(getApplicationContext()).cancel(Util.NOTIFICATION_ID);
 
-        if(savedInstanceState != null)
+        if (savedInstanceState != null)
             receivedExtras = savedInstanceState;
 
         final CandieSQLiteDataSource dataSource = CandiesApplication.getDatasource();
@@ -61,7 +60,7 @@ public class PermissionActivity extends Activity {
             public void onProcessFinish() {
                 dataSource.saveToken(token);
                 Intent paymentIntent = new Intent(getApplicationContext(), PaymentService.class);
-                if(receivedExtras != null)
+                if (receivedExtras != null)
                     paymentIntent.putExtras(receivedExtras);
                 getApplicationContext().startService(paymentIntent);
                 finish();
@@ -77,10 +76,8 @@ public class PermissionActivity extends Activity {
         progress.setIndeterminate(true);
         progress.setVisibility(View.VISIBLE);
 
-        if(dataSource.getToken() == null) {
-            GsonRequest<Token> request = new GsonRequest<>(
-                    WebServerHelper.GET_TOKEN_PATH,
-                    WebServerHelper.getTokenPost(),
+        if (dataSource.getToken() == null) {
+            WebServerHelper.requestNewToken(
                     new Response.Listener<Token>() {
                         @Override
                         public void onResponse(Token response) {
@@ -95,10 +92,7 @@ public class PermissionActivity extends Activity {
                             errorMessage.setVisibility(View.VISIBLE);
                             progress.setVisibility(View.GONE);
                         }
-                    },
-                    Token.class
-            );
-            CandiesApplication.get().addRequestToQueue(request);
+                    });
         } else
             showWebContentForToken(dataSource.getToken());
     }

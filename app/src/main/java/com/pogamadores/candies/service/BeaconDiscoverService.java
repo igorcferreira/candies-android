@@ -136,7 +136,7 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                             onIteration = false;
                         if (!CandiesApplication.get().isFromUnbind()) {
                             setUpGoogleClientIfNeeded();
-                            Util.sendMessage(mGoogleClient, "/new/candies/beacon", rangedBeacon);
+                            Util.informNewBeacon(mGoogleClient, "/new/candies/beacon", rangedBeacon);
                             Util.dispatchNotification(
                                     getApplicationContext(),
                                     rangedBeacon.getId1().toString(),

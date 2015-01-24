@@ -102,7 +102,7 @@ public class GsonRequest<T> extends Request<T> {
         defaultHeaders.put("Accept","application/json");
         defaultHeaders.put("Content-Type","application/json");
 
-        if(WebServerHelper.LIVE_ENVIRONMET) {
+        if(WebServerHelper.LIVE_ENVIRONMENT) {
             defaultHeaders.put("Environment","Live");
         }
 
