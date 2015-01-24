@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
+import com.pogamadores.candies.util.Constants;
 import com.pogamadores.candies.util.WebServerHelper;
 
 import java.util.HashMap;
@@ -102,7 +103,7 @@ public class GsonRequest<T> extends Request<T> {
         defaultHeaders.put("Accept","application/json");
         defaultHeaders.put("Content-Type","application/json");
 
-        if(WebServerHelper.LIVE_ENVIRONMENT) {
+        if(Constants.LIVE_ENVIRONMENT) {
             defaultHeaders.put("Environment","Live");
         }
 

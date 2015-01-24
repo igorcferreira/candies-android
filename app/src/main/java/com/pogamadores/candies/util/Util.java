@@ -12,21 +12,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.telephony.TelephonyManager;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.R;
-import com.pogamadores.candies.application.CandiesApplication;
 import com.pogamadores.candies.broadcast.PaymentOrderReceiver;
 
 import org.altbeacon.beacon.Beacon;
-import org.fusesource.mqtt.client.BlockingConnection;
-import org.fusesource.mqtt.client.MQTT;
-import org.fusesource.mqtt.client.QoS;
 
 import java.util.Calendar;
 
@@ -107,11 +100,6 @@ public class Util
         informNewBeacon(client, path, targetBeacon.getId1().toString(), targetBeacon.getId2().toString(), targetBeacon.getId3().toString());
     }
 
-    public static String getPhoneIMEI(Context context)     {
-        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        return telephonyManager.getDeviceId();
-    }
-
     public static void scheduleReceiver(Context context, Class receiver) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -125,50 +113,5 @@ public class Util
                 calendar.getTimeInMillis(),
                 receiverPendent
         );
-    }
-
-    /**
-     * Sends message to machine via MQTT Protocol
-     * @return results of operation. True if message has been sent or false in failure.
-     */
-    public static boolean sendMessageToMachine(String message) {
-
-        boolean retorno = false;
-
-        MQTT mqttClient = new MQTT();
-        BlockingConnection conn = null;
-
-        try {
-
-            //"tcp://iot.eclipse.org:1883", Util.getPhoneIMEI(CandiesApplication.get().getApplicationContext()), new MemoryPersistence()
-            mqttClient.setHost("iot.eclipse.org", 1883);
-            mqttClient.setClientId(Util.getPhoneIMEI(CandiesApplication.get().getApplicationContext()));
-
-            conn = mqttClient.blockingConnection();
-            conn.connect();
-
-            if (conn.isConnected()) {
-                conn.publish("jeffprestes/candies/world", message.getBytes(), QoS.AT_LEAST_ONCE, false);
-                conn.disconnect();
-                retorno = true;
-            }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("MQTT", e.getMessage(), e);
-            Toast.makeText(CandiesApplication.get().getApplicationContext(), "Nao foi possivel fazer a comunicacao com a maquina. Erro: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-            Log.e("JEFFDEBUG", "Erro ao enviar mensagem a maquina: " + e.getLocalizedMessage(), e);
-
-        } finally {
-            if (conn != null) {
-                if (conn.isConnected()) {
-                    try {  conn.disconnect();   } catch (Exception e) { }
-                }
-                conn = null;
-            }
-        }
-
-        return retorno;
     }
 }

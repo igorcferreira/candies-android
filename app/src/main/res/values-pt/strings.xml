@@ -6,7 +6,6 @@
     <string name="notification_generic_title">Doce</string>
     <string name="message_machine_close">Há uma máquina próximo a você</string>
     <string name="message_not_close_machine">Não há uma máquina próximo a você</string>
-    <string name="hello_world">Olá Mundo!</string>
     <string name="get_token_generic_error">Um erro aconteceu. Por favor, tente novamente</string>
     <string name="title_activity_permission">Permissão</string>
 </resources>

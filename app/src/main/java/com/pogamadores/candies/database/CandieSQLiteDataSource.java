@@ -28,7 +28,9 @@ public class CandieSQLiteDataSource
     }
 
     public void close() {
+        database.close();
         dbHelper.close();
+        database = null;
     }
 
     public Token getToken() {
