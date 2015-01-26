@@ -39,4 +39,3 @@ build/
 *.ipr
 *~
 *.swp
-app/src/main/java/com/pogamadores/candies/util/WebServerHelper.java

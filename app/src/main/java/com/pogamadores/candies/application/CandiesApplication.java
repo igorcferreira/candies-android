@@ -4,11 +4,15 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.database.CandieSQLiteDataSource;
 import com.pogamadores.candies.service.BeaconDiscoverService;
 import com.pogamadores.candies.util.OkHttpStack;
@@ -18,9 +22,12 @@ import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
+import java.util.concurrent.TimeUnit;
+
 public class CandiesApplication extends Application {
 
     private static final String UNBIND_FLAG = "UNBIND_FLAG";
+    private static final String TAG = CandiesApplication.class.getSimpleName();
     private CandieSQLiteDataSource dataSource;
     private static CandiesApplication app;
 
@@ -29,6 +36,7 @@ public class CandiesApplication extends Application {
     private BeaconManager beaconManager;
     private RequestQueue queue;
     private Beacon beacon;
+    private static GoogleApiClient mGoogleClient;
 
     public Beacon getBeacon() {
         return beacon;
@@ -47,6 +55,28 @@ public class CandiesApplication extends Application {
         dataSource = new CandieSQLiteDataSource(app);
         if(!Util.isServiceRunning(BeaconDiscoverService.class, getApplicationContext()))
             startService(new Intent(getApplicationContext(), BeaconDiscoverService.class));
+    }
+
+    private static void setUpGoogleClientIfNeeded() {
+        if(mGoogleClient == null) {
+            GoogleApiClient googleApiClient = new GoogleApiClient.Builder(get().getApplicationContext())
+                    .addApi(Wearable.API)
+                    .build();
+
+            ConnectionResult connectionResult =
+                    googleApiClient.blockingConnect(30, TimeUnit.SECONDS);
+
+            if (!connectionResult.isSuccess()) {
+                Log.e(TAG, "Failed to connect to GoogleApiClient.");
+                return;
+            }
+            mGoogleClient = googleApiClient;
+        }
+    }
+
+    public static GoogleApiClient getGoogleClient() {
+        setUpGoogleClientIfNeeded();
+        return mGoogleClient;
     }
 
     public static CandiesApplication get() {

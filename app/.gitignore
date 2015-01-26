@@ -1,4 +1,3 @@
-#built application files
 *.apk
 *.ap_
 
@@ -39,4 +38,3 @@ build/
 *.ipr
 *~
 *.swp
-WebServerHelper.java

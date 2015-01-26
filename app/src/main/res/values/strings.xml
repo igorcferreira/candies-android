@@ -10,6 +10,7 @@
     <string name="major" translatable="false"></string>
     <!-- suppress CheckTagEmptyBody -->
     <string name="minor" translatable="false"></string>
+
     <string name="notification_generic_title">Candy</string>
     <string name="notification_generic_message">There is a candy machine close to you! Enjoy it!</string>
     <string name="action_purchase">Purchase</string>
