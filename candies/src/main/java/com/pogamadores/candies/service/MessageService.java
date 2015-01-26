@@ -8,7 +8,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
@@ -50,11 +49,11 @@ public class MessageService extends WearableListenerService {
         for(DataEvent event : dataEvents) {
 
             if(event.getType() == DataEvent.TYPE_CHANGED) {
-                DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
-                Log.d(TAG, dataMapItem.getDataMap().getString("content"));
-                if (event.getDataItem().getUri().getPath().equalsIgnoreCase("/new/candies/beacon")) {
-                    Uri message = Uri.parse(dataMapItem.getDataMap().getString("content"));
-                    Util.dispatchNotification(getApplicationContext(), message);
+                String message = Util.extractMessage(event,"/new/candies/beacon");
+                if(message != null && !Util.isForeground(getApplicationContext(), "com.pogamadores.candies")) {
+                    Log.d(TAG, message);
+                    Uri uri = Uri.parse(message);
+                    Util.dispatchNotification(getApplicationContext(), uri);
                 }
             }
         }

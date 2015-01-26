@@ -9,6 +9,9 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.R;
 import com.pogamadores.candies.util.IntentParameters;
@@ -65,6 +68,17 @@ public class MainActivity extends Activity {
             public void onLayoutInflated(WatchViewStub stub) {
                 mTextView = (TextView) stub.findViewById(R.id.text);
                 setUpGoogleClientIfNeeded(mTextView, getIntent());
+                Wearable.DataApi.addListener(mGoogleClient, new DataApi.DataListener() {
+                    @Override
+                    public void onDataChanged(DataEventBuffer dataEvents) {
+                        for(DataEvent event : dataEvents) {
+                            String message = Util.extractMessage(event, "/candies/payment");
+                            if(message != null) {
+                                mTextView.setText(message);
+                            }
+                        }
+                    }
+                });
             }
         });
     }

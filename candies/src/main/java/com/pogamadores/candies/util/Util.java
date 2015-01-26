@@ -1,19 +1,26 @@
 package com.pogamadores.candies.util;
 
 import android.app.ActivityManager;
+import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.R;
 import com.pogamadores.candies.ui.activity.MainActivity;
+
+import java.util.List;
 
 public class Util {
     public static final int NOTIFICATION_ID = 23156;
@@ -44,10 +51,15 @@ public class Util {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentText(context.getString(R.string.notification_generic_message))
                 .setContentTitle(context.getString(R.string.notification_generic_title))
-                .addAction(R.drawable.ic_launcher, context.getString(R.string.action_purchase), pendingIntent);
+                .addAction(R.drawable.ic_purchase, context.getString(R.string.action_purchase), pendingIntent);
 
-        NotificationManagerCompat.from(context)
-                .notify(NOTIFICATION_ID, builder.build());
+        Notification notification = new NotificationCompat.WearableExtender()
+                .setBackground(BitmapFactory.decodeResource(context.getApplicationContext().getResources(), R.drawable.ic_launcher))
+                .extend(builder)
+                .build();
+
+         NotificationManagerCompat.from(context)
+                .notify(NOTIFICATION_ID, notification);
     }
 
     public static void sendMessage(GoogleApiClient client, String path, String message) {
@@ -78,5 +90,21 @@ public class Util {
             }
         }
         return false;
+    }
+
+    public static boolean isForeground(Context context, String myPackage){
+        ActivityManager manager = (ActivityManager) context.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        List< ActivityManager.RunningTaskInfo > runningTaskInfo = manager.getRunningTasks(Integer.MAX_VALUE);
+        ComponentName componentInfo = runningTaskInfo.get(0).topActivity;
+        return componentInfo.getPackageName().equals(myPackage);
+    }
+
+    public static String extractMessage(DataEvent event, String path) {
+        String message = null;
+        DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
+        if (event.getDataItem().getUri().getPath().equalsIgnoreCase(path)) {
+            message = dataMapItem.getDataMap().getString("content");
+        }
+        return message;
     }
 }
