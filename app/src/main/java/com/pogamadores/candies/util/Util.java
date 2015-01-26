@@ -114,4 +114,28 @@ public class Util
                 receiverPendent
         );
     }
+
+    /**
+     * Check if the beacon belongs to the list of Beacons that my App recognizes.
+     * The list is defined at @see Constants.myBeacons
+     * @param beacon
+     * @return true if the beacon belongs to my app
+     */
+    public static boolean isMyBeacon(Beacon beacon)       {
+        boolean retorno = false;
+
+        if (beacon!= null)    {
+
+            String beaconId = beacon.getId1() + "-" + beacon.getId2() + "-" + beacon.getId3();
+
+            for (String myBeaconId: Constants.myBeacons)    {
+                if (myBeaconId.equals(beaconId))    {
+                    retorno = true;
+                    break;
+                }
+            }
+        }
+
+        return retorno;
+    }
 }
