@@ -19,6 +19,8 @@ import com.pogamadores.candies.ui.activity.PermissionActivity;
 import com.pogamadores.candies.util.IntentParameters;
 import com.pogamadores.candies.util.Util;
 
+import org.altbeacon.beacon.Beacon;
+
 import java.util.concurrent.TimeUnit;
 
 public class WearableListener extends WearableListenerService {
@@ -51,37 +53,52 @@ public class WearableListener extends WearableListenerService {
         setUpGoogleClientIfNeeded();
 
         for(DataEvent event : dataEvents) {
-            if(event.getType() == DataEvent.TYPE_CHANGED &&
-                    event.getDataItem().getUri().getPath().equalsIgnoreCase("/purchase/candies")) {
-                DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
-                Uri message = Uri.parse(dataMapItem.getDataMap().getString("content"));
+            if(event.getType() == DataEvent.TYPE_CHANGED) {
+                if(event.getDataItem().getUri().getPath().equalsIgnoreCase("/purchase/candies")) {
+                    DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
+                    Uri message = Uri.parse(dataMapItem.getDataMap().getString("content"));
 
-                Bundle infoBundle = new Bundle();
-                infoBundle.putString(IntentParameters.UUID, message.getQueryParameter("uuid"));
-                infoBundle.putString(IntentParameters.MAJOR, message.getQueryParameter("major"));
-                infoBundle.putString(IntentParameters.MINOR, message.getQueryParameter("minor"));
+                    Bundle infoBundle = new Bundle();
+                    infoBundle.putString(IntentParameters.UUID, message.getQueryParameter("uuid"));
+                    infoBundle.putString(IntentParameters.MAJOR, message.getQueryParameter("major"));
+                    infoBundle.putString(IntentParameters.MINOR, message.getQueryParameter("minor"));
 
-                if(CandiesApplication.getDatasource().getToken() == null) {
-                    Util.sendMessage(
-                            mGoogleClient,
-                            "/candies/payment",
-                            "token"
-                    );
+                    if (CandiesApplication.getDatasource().getToken() == null) {
+                        Util.sendMessage(
+                                mGoogleClient,
+                                "/candies/payment",
+                                "token"
+                        );
 
-                    Intent permissionIntent = new Intent(getApplicationContext(), PermissionActivity.class);
-                    permissionIntent.putExtras(infoBundle);
-                    permissionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    getApplicationContext().startActivity(permissionIntent);
-                }else {
-                    Util.sendMessage(
-                            mGoogleClient,
-                            "/candies/payment",
-                            "start"
-                    );
+                        Intent permissionIntent = new Intent(getApplicationContext(), PermissionActivity.class);
+                        permissionIntent.putExtras(infoBundle);
+                        permissionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        getApplicationContext().startActivity(permissionIntent);
+                    } else {
+                        Util.sendMessage(
+                                mGoogleClient,
+                                "/candies/payment",
+                                "start"
+                        );
 
-                    Intent purchaseIntent = new Intent(getApplicationContext(), PaymentService.class);
-                    purchaseIntent.putExtras(infoBundle);
-                    getApplicationContext().startService(purchaseIntent);
+                        Intent purchaseIntent = new Intent(getApplicationContext(), PaymentService.class);
+                        purchaseIntent.putExtras(infoBundle);
+                        getApplicationContext().startService(purchaseIntent);
+                    }
+                } else if(event.getDataItem().getUri().getPath().equalsIgnoreCase("/candies/beacon")) {
+                    Beacon beacon = CandiesApplication.get().getBeacon();
+                    if(beacon == null) {
+                        if(!Util.isServiceRunning(BeaconDiscoverService.class, getApplicationContext())) {
+                            Intent service = new Intent(getApplicationContext(), BeaconDiscoverService.class);
+                            getApplicationContext().startService(service);
+                        }
+                    } else {
+                        Util.informNewBeacon(
+                                mGoogleClient,
+                                "/new/candies/beacon",
+                                beacon
+                        );
+                    }
                 }
             }
         }

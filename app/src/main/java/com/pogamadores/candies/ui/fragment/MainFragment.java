@@ -65,11 +65,21 @@ public class MainFragment extends Fragment {
                     if(infoBundle != null)
                         permissionIntent.putExtras(infoBundle);
                     getActivity().startActivity(permissionIntent);
+                    Util.sendMessage(
+                            CandiesApplication.getGoogleClient(),
+                            "/candies/payment",
+                            "token"
+                    );
                 }else {
                     Intent purchaseIntent = new Intent(getActivity().getApplicationContext(), PaymentService.class);
                     if (infoBundle != null)
                         purchaseIntent.putExtras(infoBundle);
                     getActivity().startService(purchaseIntent);
+                    Util.sendMessage(
+                            CandiesApplication.getGoogleClient(),
+                            "/candies/payment",
+                            "start"
+                    );
                 }
 
                 NotificationManagerCompat.from(getActivity().getApplicationContext()).cancel(Util.NOTIFICATION_ID);
@@ -80,12 +90,13 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(mGoogleClient != null) {
-                    Util.informNewBeacon(mGoogleClient, "/new/candies/beacon", "", "", "");
+                    setUpGoogleClientIfNeeded();
+                    Util.informNewBeacon(mGoogleClient, "/new/candies/beacon", "1", "1", "1");
                     Util.dispatchNotification(
                             getActivity().getApplicationContext(),
-                            "",
-                            "",
-                            "",
+                            "1",
+                            "1",
+                            "1",
                             R.drawable.ic_launcher
                     );
                 }

@@ -82,7 +82,6 @@ public class Util
         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
         putDataMapRequest.getDataMap().putLong("DataStamp", System.currentTimeMillis());
         putDataMapRequest.getDataMap().putString("content", message);
-
         Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest());
     }
 

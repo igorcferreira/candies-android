@@ -11,7 +11,7 @@ import java.util.Locale;
 
 public class WebServerHelper {
     public static final String SERVER_AUTHORITY = "novatrix.com.br";
-    public static final String SERVER_URL = "https://www.novatrix.com.br/gateway";
+    public static final String SERVER_URL = "http://www.novatrix.com.br/gateway";
     public static final String PROJECT_NAME = "smartwatch";
 
     public static final String GET_TOKEN_PATH = "gettoken.php";

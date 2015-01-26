@@ -146,16 +146,17 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                             );
                         }
                         CandiesApplication.get().setFromUnbind(false);
-                        finishService();
-                        break;
+//                        finishService();
+                        return;
                     } else if (rangedBeacon.getId1().toString().equals(application.getBeacon().getId1().toString())) {
                         if (rangedBeacon.getDistance() < 2.f)
                             application.setBeacon(rangedBeacon);
                         else
                             application.setBeacon(null);
-                        break;
+                        return;
                     }
                 }
+                application.setBeacon(null);
             }
         });
 
