@@ -31,6 +31,13 @@ public class PaymentOrderReceiver extends BroadcastReceiver {
             if(dataSource != null) {
                 Token token = dataSource.getToken();
                 if(token != null) {
+
+                    Util.sendMessage(
+                            CandiesApplication.getGoogleClient(),
+                            "/candies/payment",
+                            "start"
+                    );
+
                     Intent serviceIntent = new Intent(context, PaymentService.class);
                     serviceIntent.putExtras(intent.getExtras());
                     serviceIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -38,6 +45,12 @@ public class PaymentOrderReceiver extends BroadcastReceiver {
                     return;
                 }
             }
+
+            Util.sendMessage(
+                    CandiesApplication.getGoogleClient(),
+                    "/candies/payment",
+                    "token"
+            );
 
             Intent webIntent = new Intent(context, PermissionActivity.class);
             webIntent.putExtras(intent.getExtras());

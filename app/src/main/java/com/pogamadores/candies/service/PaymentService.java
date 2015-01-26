@@ -99,6 +99,11 @@ public class PaymentService extends Service {
                                 @Override
                                 public void onResponse(NewTransaction response) {
                                     if(response.isSuccessfull()) {
+                                        Util.sendMessage(
+                                                CandiesApplication.getGoogleClient(),
+                                                "/candies/payment",
+                                                "success"
+                                        );
                                         finishService("Doce sendo liberado...", true);
                                     } else {
                                         finishService("Erro no comando à maquina.", false);
@@ -123,6 +128,13 @@ public class PaymentService extends Service {
 
     private void finishService(String message, boolean successful) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+
+        Util.sendMessage(
+                CandiesApplication.getGoogleClient(),
+                "/candies/payment",
+                (successful?"success":"fail")
+        );
+
         if (paymentStepsListener != null)
             paymentStepsListener.onPaymentFinished(token, Util.PRODUCT_DEFAULT_VALUE, successful, message);
         stopSelf();

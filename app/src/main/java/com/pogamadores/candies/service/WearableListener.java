@@ -17,6 +17,7 @@ import com.google.android.gms.wearable.WearableListenerService;
 import com.pogamadores.candies.application.CandiesApplication;
 import com.pogamadores.candies.ui.activity.PermissionActivity;
 import com.pogamadores.candies.util.IntentParameters;
+import com.pogamadores.candies.util.Util;
 
 import java.util.concurrent.TimeUnit;
 
@@ -61,11 +62,23 @@ public class WearableListener extends WearableListenerService {
                 infoBundle.putString(IntentParameters.MINOR, message.getQueryParameter("minor"));
 
                 if(CandiesApplication.getDatasource().getToken() == null) {
+                    Util.sendMessage(
+                            mGoogleClient,
+                            "/candies/payment",
+                            "token"
+                    );
+
                     Intent permissionIntent = new Intent(getApplicationContext(), PermissionActivity.class);
                     permissionIntent.putExtras(infoBundle);
                     permissionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     getApplicationContext().startActivity(permissionIntent);
                 }else {
+                    Util.sendMessage(
+                            mGoogleClient,
+                            "/candies/payment",
+                            "start"
+                    );
+
                     Intent purchaseIntent = new Intent(getApplicationContext(), PaymentService.class);
                     purchaseIntent.putExtras(infoBundle);
                     getApplicationContext().startService(purchaseIntent);

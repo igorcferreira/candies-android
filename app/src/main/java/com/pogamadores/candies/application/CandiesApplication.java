@@ -3,8 +3,8 @@ package com.pogamadores.candies.application;
 import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -21,8 +21,6 @@ import com.pogamadores.candies.util.Util;
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
-
-import java.util.concurrent.TimeUnit;
 
 public class CandiesApplication extends Application {
 
@@ -59,18 +57,27 @@ public class CandiesApplication extends Application {
 
     private static void setUpGoogleClientIfNeeded() {
         if(mGoogleClient == null) {
-            GoogleApiClient googleApiClient = new GoogleApiClient.Builder(get().getApplicationContext())
+            mGoogleClient = new GoogleApiClient.Builder(get().getApplicationContext())
                     .addApi(Wearable.API)
                     .build();
 
-            ConnectionResult connectionResult =
-                    googleApiClient.blockingConnect(30, TimeUnit.SECONDS);
+            mGoogleClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                @Override
+                public void onConnected(Bundle bundle) {}
+                @Override
+                public void onConnectionSuspended(int i) {
+                    mGoogleClient = null;
+                }
+            });
 
-            if (!connectionResult.isSuccess()) {
-                Log.e(TAG, "Failed to connect to GoogleApiClient.");
-                return;
-            }
-            mGoogleClient = googleApiClient;
+            mGoogleClient.registerConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                @Override
+                public void onConnectionFailed(ConnectionResult connectionResult) {
+                    mGoogleClient = null;
+                }
+            });
+
+            mGoogleClient.connect();
         }
     }
 
