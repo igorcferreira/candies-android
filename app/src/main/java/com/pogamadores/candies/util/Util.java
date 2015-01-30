@@ -59,7 +59,7 @@ public class Util
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentTitle(context.getString(R.string.notification_generic_title))
                 .setContentText(context.getString(R.string.notification_generic_message))
-                .addAction(R.drawable.ic_purchase, context.getString(R.string.action_purchase), purchasePendingIntent);
+                .addAction(R.drawable.ic_logo_paypal, context.getString(R.string.action_purchase), purchasePendingIntent);
 
         Notification notification = builder.build();
         notification.defaults |= Notification.DEFAULT_ALL;
@@ -102,7 +102,7 @@ public class Util
     public static void scheduleReceiver(Context context, Class receiver) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 5);
+        calendar.set(Calendar.MILLISECOND, 500);
 
         AlarmManager alarmManager = (AlarmManager)context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Intent receiverIntent = new Intent(context.getApplicationContext(), receiver);

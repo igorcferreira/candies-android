@@ -119,6 +119,8 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                     if (application.getBeacon() == null) {
                         if (rangedBeacon.getDistance() > 2.f)
                             continue;
+                        if(!Util.isMyBeacon(rangedBeacon))
+                            continue;
                         application.setBeacon(rangedBeacon);
                         onIteration = true;
                         if (listenerList != null) {
@@ -146,7 +148,7 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                             );
                         }
                         CandiesApplication.get().setFromUnbind(false);
-//                        finishService();
+                        finishService();
                         return;
                     } else if (rangedBeacon.getId1().toString().equals(application.getBeacon().getId1().toString())) {
                         if (rangedBeacon.getDistance() < 2.f)
@@ -156,7 +158,6 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                         return;
                     }
                 }
-                application.setBeacon(null);
             }
         });
 
@@ -166,12 +167,13 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
     }
 
     private void finishService() {
-        Util.scheduleReceiver(getApplicationContext(), StartServiceReceiver.class);
         try {
             beaconManager.stopMonitoringBeaconsInRegion(region);
             beaconManager.unbind(this);
         } catch (Exception ignored) {}
         region = null;
+        application.setBeacon(null);
+        Util.scheduleReceiver(getApplicationContext(), StartServiceReceiver.class);
         stopSelf();
     }
     //endregion

@@ -109,6 +109,13 @@ public class MainFragment extends Fragment {
 
         setUpGoogleClientIfNeeded();
 
+        if(!Util.isServiceRunning(BeaconDiscoverService.class, getActivity().getApplicationContext())) {
+            Intent service = new Intent(getActivity().getApplicationContext(), BeaconDiscoverService.class);
+            if (getActivity().getIntent() != null && getActivity().getIntent().getExtras() != null)
+                service.putExtras(getActivity().getIntent().getExtras());
+            getActivity().startService(service);
+        }
+
         return rootView;
     }
 
