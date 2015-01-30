@@ -1,12 +1,13 @@
 package com.pogamadores.candies.ui.activity;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -24,7 +25,7 @@ import com.pogamadores.candies.util.CandiesWebViewClient;
 import com.pogamadores.candies.util.Util;
 import com.pogamadores.candies.util.WebServerHelper;
 
-public class PermissionActivity extends Activity {
+public class PermissionActivity extends ActionBarActivity {
 
     private WebView webContent;
     private ProgressBar progress;
@@ -43,6 +44,8 @@ public class PermissionActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
         NotificationManagerCompat.from(getApplicationContext()).cancel(Util.NOTIFICATION_ID);
