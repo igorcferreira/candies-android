@@ -25,8 +25,8 @@ public class MainActivity extends Activity implements DataApi.DataListener {
     private TextView mTextView;
     private GoogleApiClient mGoogleClient;
 
-    private void setUpGoogleClientIfNeeded(final TextView messageField, final Intent intent) {
-        if(mGoogleClient == null) {
+    private void setUpGoogleClientIfNeeded(final Intent intent) {
+        if (mGoogleClient == null) {
 
             mGoogleClient = new GoogleApiClient.Builder(this)
                     .addApi(Wearable.API)
@@ -34,8 +34,11 @@ public class MainActivity extends Activity implements DataApi.DataListener {
             mGoogleClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                 @Override
                 public void onConnected(Bundle bundle) {
-                    if(intent != null && intent.getExtras() != null && intent.hasExtra(IntentParameters.REQUEST_CODE)) {
-                        Util.requestPurchase(mGoogleClient,"/purchase/candies", intent.getExtras());
+                    if (intent != null && intent.getExtras() != null && intent.hasExtra(IntentParameters.REQUEST_CODE)) {
+                        Util.requestPurchase(mGoogleClient, "/purchase/candies", intent.getExtras());
+                        updateLabel("Compra sendo realizada");
+                    } else {
+                        updateLabel("Aproxime-se de uma máquina");
                     }
                 }
 
@@ -55,22 +58,31 @@ public class MainActivity extends Activity implements DataApi.DataListener {
         }
     }
 
+    protected void updateLabel(final String label) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mTextView.setText(label);
+            }
+        });
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Wearable.DataApi.removeListener(mGoogleClient, this);
+        if (mGoogleClient != null) Wearable.DataApi.removeListener(mGoogleClient, this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Wearable.DataApi.addListener(mGoogleClient,this);
+        if (mGoogleClient != null) Wearable.DataApi.addListener(mGoogleClient, this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Wearable.DataApi.removeListener(mGoogleClient, this);
+        if (mGoogleClient != null) Wearable.DataApi.removeListener(mGoogleClient, this);
     }
 
     @Override
@@ -85,8 +97,7 @@ public class MainActivity extends Activity implements DataApi.DataListener {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mTextView = (TextView) stub.findViewById(R.id.text);
-                mTextView.setText("Aproxime-se de uma máquina");
-                setUpGoogleClientIfNeeded(mTextView, getIntent());
+                setUpGoogleClientIfNeeded(getIntent());
                 Util.sendMessage(
                         mGoogleClient,
                         "/candies/beacon",
@@ -98,33 +109,38 @@ public class MainActivity extends Activity implements DataApi.DataListener {
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
-        for(DataEvent event : dataEvents) {
+        for (DataEvent event : dataEvents) {
 
             final String newMessage = Util.extractMessage(event, "/new/candies/beacon");
-            if(newMessage != null) {
-                mTextView.setText("Novo beacon");
-                mTextView.setOnClickListener(new View.OnClickListener() {
+            if (newMessage != null) {
+                updateLabel("Novo beacon");
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onClick(View v) {
+                    public void run() {
+                        mTextView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                        Uri uri = Uri.parse(newMessage);
+                                Uri uri = Uri.parse(newMessage);
 
-                        Bundle infoBundle = new Bundle();
-                        infoBundle.putString(IntentParameters.UUID, uri.getQueryParameter("uuid"));
-                        infoBundle.putString(IntentParameters.MAJOR, uri.getQueryParameter("major"));
-                        infoBundle.putString(IntentParameters.MINOR, uri.getQueryParameter("minor"));
-                        infoBundle.putInt(IntentParameters.REQUEST_CODE, RequestCode.PURCHASE);
+                                Bundle infoBundle = new Bundle();
+                                infoBundle.putString(IntentParameters.UUID, uri.getQueryParameter("uuid"));
+                                infoBundle.putString(IntentParameters.MAJOR, uri.getQueryParameter("major"));
+                                infoBundle.putString(IntentParameters.MINOR, uri.getQueryParameter("minor"));
+                                infoBundle.putInt(IntentParameters.REQUEST_CODE, RequestCode.PURCHASE);
 
-                        Util.requestPurchase(mGoogleClient,"/purchase/candies", infoBundle);
-                        mTextView.setOnClickListener(null);
+                                Util.requestPurchase(mGoogleClient, "/purchase/candies", infoBundle);
+                                mTextView.setOnClickListener(null);
+                            }
+                        });
                     }
                 });
                 return;
             }
 
             String message = Util.extractMessage(event, "/candies/payment");
-            if(message != null) {
-                mTextView.setText(message);
+            if (message != null) {
+                updateLabel(message);
                 return;
             }
         }

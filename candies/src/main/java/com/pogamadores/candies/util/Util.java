@@ -48,7 +48,7 @@ public class Util {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentText(context.getString(R.string.notification_generic_message))
                 .setContentTitle(context.getString(R.string.notification_generic_title))
-                .addAction(R.drawable.ic_purchase, context.getString(R.string.action_purchase), pendingIntent);
+                .addAction(R.drawable.ic_logo_paypal, context.getString(R.string.action_purchase), pendingIntent);
 
         Notification notification = new NotificationCompat.WearableExtender()
                 .setBackground(BitmapFactory.decodeResource(context.getApplicationContext().getResources(), R.drawable.ic_launcher))
