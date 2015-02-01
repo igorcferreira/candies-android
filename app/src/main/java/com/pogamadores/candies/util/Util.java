@@ -121,7 +121,7 @@ public class Util
     public static void scheduleReceiver(Context context, Class receiver) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.MILLISECOND, 500);
+        calendar.set(Calendar.MINUTE, 30);
 
         AlarmManager alarmManager = (AlarmManager)context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Intent receiverIntent = new Intent(context.getApplicationContext(), receiver);

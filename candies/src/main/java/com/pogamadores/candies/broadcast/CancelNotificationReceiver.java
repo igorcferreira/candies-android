@@ -3,12 +3,14 @@ package com.pogamadores.candies.broadcast;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.util.Util;
+
+import java.util.concurrent.TimeUnit;
 
 public class CancelNotificationReceiver extends BroadcastReceiver {
 
@@ -17,39 +19,27 @@ public class CancelNotificationReceiver extends BroadcastReceiver {
 
     public CancelNotificationReceiver() {}
 
-    private boolean setUpGoogleClientIfNeeded(Context context) {
+    private void setUpGoogleClientIfNeeded(Context context) {
         if (mGoogleClient == null) {
 
-            mGoogleClient = new GoogleApiClient.Builder(context.getApplicationContext())
+            GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context.getApplicationContext())
                     .addApi(Wearable.API)
                     .build();
-            mGoogleClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                @Override
-                public void onConnected(Bundle bundle) {
-                    Util.sendMessage(mGoogleClient, "/candies/notification", "cancel");
-                }
-                @Override
-                public void onConnectionSuspended(int i) {
-                    mGoogleClient = null;
-                }
-            });
 
-            mGoogleClient.registerConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                @Override
-                public void onConnectionFailed(ConnectionResult connectionResult) {
-                    mGoogleClient = null;
-                }
-            });
-            mGoogleClient.connect();
-            return false;
-        } else {
-            return true;
+            ConnectionResult connectionResult =
+                    googleApiClient.blockingConnect(30, TimeUnit.SECONDS);
+
+            if (!connectionResult.isSuccess()) {
+                Log.e(CancelNotificationReceiver.class.getSimpleName(), "Failed to connect to GoogleApiClient.");
+            } else {
+                mGoogleClient = googleApiClient;
+            }
         }
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(setUpGoogleClientIfNeeded(context))
-            Util.sendMessage(mGoogleClient, "/candies/notification", "cancel");
+        setUpGoogleClientIfNeeded(context);
+        Util.sendMessage(mGoogleClient, "/candies/notification", "cancel");
     }
 }

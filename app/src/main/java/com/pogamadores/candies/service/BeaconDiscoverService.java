@@ -52,7 +52,11 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             beaconManager = CandiesApplication.get().getBeaconManager();
             beaconManager.getBeaconParsers().add(new BeaconParser().
                     setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
-            beaconManager.bind(this);
+            try {
+                beaconManager.bind(this);
+            } catch (Exception error) {
+                Log.e(TAG, "Beacon manager bind error", error);
+            }
             if(application == null)
                 application = CandiesApplication.get();
             application.setBeacon(null);
@@ -150,12 +154,6 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                         CandiesApplication.get().setFromUnbind(false);
                         finishService();
                         return;
-                    } else if (rangedBeacon.getId1().toString().equals(application.getBeacon().getId1().toString())) {
-                        if (rangedBeacon.getDistance() < 2.f)
-                            application.setBeacon(rangedBeacon);
-                        else
-                            application.setBeacon(null);
-                        return;
                     }
                 }
             }
@@ -172,7 +170,6 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             beaconManager.unbind(this);
         } catch (Exception ignored) {}
         region = null;
-        application.setBeacon(null);
         Util.scheduleReceiver(getApplicationContext(), StartServiceReceiver.class);
         stopSelf();
     }
