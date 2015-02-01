@@ -151,6 +151,7 @@ public class MainActivity extends Activity implements DataApi.DataListener {
                     case "start": updateLabel(getString(R.string.msg_purchasing)); break;
                     case "fail": updateLabel(getString(R.string.msg_error)); break;
                 }
+                mStub.setOnClickListener(null);
                 return;
             }
 
