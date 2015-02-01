@@ -170,14 +170,19 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
 
         try {
             beaconManager.startRangingBeaconsInRegion(region);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            Log.e(TAG, "Beacon Manager Error", ignored);
+        }
     }
 
     private void finishService() {
         try {
-            beaconManager.stopMonitoringBeaconsInRegion(region);
+            beaconManager.stopRangingBeaconsInRegion(region);
             beaconManager.unbind(this);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            Log.e(TAG, "Beacon Manager Error", ignored);
+        }
+        beaconManager = null;
         region = null;
         Util.scheduleReceiver(getApplicationContext(), StartServiceReceiver.class);
         stopSelf();
