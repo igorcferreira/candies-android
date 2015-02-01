@@ -47,6 +47,11 @@ public class PaymentService extends Service {
 
         if(token != null) {
             NotificationManagerCompat.from(getApplicationContext()).cancel(Util.NOTIFICATION_ID);
+            Util.sendMessage(
+                    CandiesApplication.getGoogleClient(),
+                    "/candies/payment",
+                    "purchasing"
+            );
             WebServerHelper.performNewPayment (
                     this.getStringToken(),
                     Util.PRODUCT_DEFAULT_VALUE,

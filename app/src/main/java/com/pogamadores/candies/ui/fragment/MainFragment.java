@@ -85,27 +85,6 @@ public class MainFragment extends Fragment {
                 NotificationManagerCompat.from(getActivity().getApplicationContext()).cancel(Util.NOTIFICATION_ID);
             }
         });
-        Button mBtNotificar = (Button)rootView.findViewById(R.id.btNotification);
-        mBtNotificar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mGoogleClient != null) {
-                    setUpGoogleClientIfNeeded();
-                    Util.informNewBeacon(mGoogleClient, "/new/candies/beacon", "1", "1", "1");
-                    Util.dispatchNotification(
-                            getActivity().getApplicationContext(),
-                            "1",
-                            "1",
-                            "1",
-                            R.drawable.ic_launcher
-                    );
-                }
-            }
-        });
-
-        mTvInformation.setText(getString(R.string.message_machine_close));
-        mBtPurchase.setVisibility(View.VISIBLE);
-        mBtNotificar.setVisibility(View.VISIBLE);
 
         setUpGoogleClientIfNeeded();
 

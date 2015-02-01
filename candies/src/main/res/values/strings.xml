@@ -9,7 +9,7 @@
     <string name="notification_generic_title">Candy</string>
     <string name="touch_to_buy">Candie machine near. Touch the screen to buy!</string>
     <string name="please_authorize">Please, go to your phone to authorize the payment</string>
-    <string name="msg_success">Go get some candies! \o/</string>
+    <string name="msg_success">Go get some candies! \\o/</string>
     <string name="msg_purchasing">Purchasing</string>
     <string name="msg_error">Error during the purchase. Please, try again on your phone</string>
     <string name="msg_look_up">Look for a candie machine</string>

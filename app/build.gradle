@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'io.fabric.tools:gradle:1.14.4'
     }
 }
 apply plugin: 'com.android.application'
@@ -51,6 +51,8 @@ android {
 
     lintOptions {
         disable 'InvalidPackage'
+        disable 'IconDensities'
+        disable 'IconColors'
     }
 }
 

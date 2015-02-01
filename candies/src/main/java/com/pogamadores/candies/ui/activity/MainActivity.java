@@ -148,7 +148,8 @@ public class MainActivity extends Activity implements DataApi.DataListener {
                 switch (message) {
                     case "token": updateLabel(getString(R.string.please_authorize)); break;
                     case "success": updateLabel(getString(R.string.msg_success)); break;
-                    case "start": updateLabel(getString(R.string.msg_purchasing)); break;
+                    case "start":
+                    case "purchasing": updateLabel(getString(R.string.msg_purchasing)); break;
                     case "fail": updateLabel(getString(R.string.msg_error)); break;
                 }
                 mStub.setOnClickListener(null);
