@@ -28,6 +28,12 @@ public class Util
     public static final int NOTIFICATION_ID = 123456;
     public static final double PRODUCT_DEFAULT_VALUE = 10.5f;
 
+    public static void cancelNotification(Context context)
+    {
+        NotificationManagerCompat manager = NotificationManagerCompat.from(context.getApplicationContext());
+        manager.cancel(NOTIFICATION_ID);
+    }
+
     public static void dispatchNotification(Context context, String uuid, String major, String minor, int productImage)
     {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), productImage);
@@ -42,11 +48,22 @@ public class Util
         infoBundle.putString(IntentParameters.MAJOR,major);
         infoBundle.putString(IntentParameters.MINOR,minor);
 
-        Intent purchaseIntent = new Intent(context, PaymentOrderReceiver.class);
+        Intent cancelIntent = new Intent(context.getApplicationContext(), PaymentOrderReceiver.class);
+        cancelIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+        cancelIntent.putExtras(infoBundle);
+
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(
+                context.getApplicationContext(),
+                0,
+                cancelIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT
+        );
+
+        Intent purchaseIntent = new Intent(context.getApplicationContext(), PaymentOrderReceiver.class);
         purchaseIntent.putExtras(infoBundle);
 
         PendingIntent purchasePendingIntent = PendingIntent.getBroadcast(
-                context,
+                context.getApplicationContext(),
                 RequestCode.PURCHASE,
                 purchaseIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
@@ -55,6 +72,7 @@ public class Util
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setLocalOnly(true)
                 .setAutoCancel(true)
+                .setDeleteIntent(cancelPendingIntent)
                 .setCategory(NotificationCompat.CATEGORY_PROMO)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentTitle(context.getString(R.string.notification_generic_title))
@@ -64,7 +82,7 @@ public class Util
         Notification notification = builder.build();
         notification.defaults |= Notification.DEFAULT_ALL;
 
-        NotificationManagerCompat manager = NotificationManagerCompat.from(context);
+        NotificationManagerCompat manager = NotificationManagerCompat.from(context.getApplicationContext());
         manager.notify(NOTIFICATION_ID,notification);
     }
 

@@ -22,6 +22,12 @@ import com.pogamadores.candies.ui.activity.MainActivity;
 public class Util {
     public static final int NOTIFICATION_ID = 23156;
 
+    public static void cancelNotification(Context context)
+    {
+        NotificationManagerCompat manager = NotificationManagerCompat.from(context.getApplicationContext());
+        manager.cancel(NOTIFICATION_ID);
+    }
+
     public static void dispatchNotification(Context context, Uri uri) {
 
         Bundle infoBundle = new Bundle();

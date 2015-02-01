@@ -54,6 +54,12 @@ public class MessageService extends WearableListenerService {
                     Log.d(TAG, message);
                     Uri uri = Uri.parse(message);
                     Util.dispatchNotification(getApplicationContext(), uri);
+                    return;
+                }
+
+                message = Util.extractMessage(event, "/candies/notification");
+                if(message != null && message.equalsIgnoreCase("cancel")) {
+                    Util.cancelNotification(getApplicationContext());
                 }
             }
         }
