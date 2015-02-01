@@ -87,13 +87,7 @@ public class MainFragment extends Fragment {
         });
 
         setUpGoogleClientIfNeeded();
-
-        if(!Util.isServiceRunning(BeaconDiscoverService.class, getActivity().getApplicationContext())) {
-            Intent service = new Intent(getActivity().getApplicationContext(), BeaconDiscoverService.class);
-            if (getActivity().getIntent() != null && getActivity().getIntent().getExtras() != null)
-                service.putExtras(getActivity().getIntent().getExtras());
-            getActivity().startService(service);
-        }
+        setBeaconNotFoundScreen();
 
         return rootView;
     }
@@ -143,6 +137,35 @@ public class MainFragment extends Fragment {
         super.onStop();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        CandiesApplication.get().setFromUnbind(false);
+        if(CandiesApplication.get().getBeacon() == null) {
+            searchBeacon();
+        } else {
+            setBeaconFoundScreen();
+        }
+    }
+
+    private void setBeaconNotFoundScreen() {
+        mTvInformation.setText(getString(R.string.message_not_close_machine));
+        mBtPurchase.setVisibility(View.GONE);
+    }
+
+    private void setBeaconFoundScreen() {
+        mTvInformation.setText(getString(R.string.message_machine_close));
+        mBtPurchase.setVisibility(View.VISIBLE);
+    }
+
+    private void searchBeacon() {
+        if(!Util.isServiceRunning(BeaconDiscoverService.class, getActivity().getApplicationContext())) {
+            Intent service = new Intent(getActivity().getApplicationContext(), BeaconDiscoverService.class);
+            if (getActivity().getIntent() != null && getActivity().getIntent().getExtras() != null)
+                service.putExtras(getActivity().getIntent().getExtras());
+            getActivity().startService(service);
+        }
+    }
 
     private ServiceConnection mPaymentConnection = new ServiceConnection() {
         @Override
@@ -200,8 +223,7 @@ public class MainFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mTvInformation.setText(getString(R.string.message_machine_close));
-                        mBtPurchase.setVisibility(View.VISIBLE);
+                        setBeaconFoundScreen();
                     }
                 });
                 if(beaconService != null)

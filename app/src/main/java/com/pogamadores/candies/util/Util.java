@@ -17,12 +17,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.R;
+import com.pogamadores.candies.application.CandiesApplication;
 import com.pogamadores.candies.broadcast.CancelNotificationReceiver;
 import com.pogamadores.candies.broadcast.PaymentOrderReceiver;
 
 import org.altbeacon.beacon.Beacon;
 
 import java.util.Calendar;
+import java.util.Date;
 
 public class Util
 {
@@ -44,6 +46,8 @@ public class Util
 
     public static void dispatchNotification(Context context, String uuid, String major, String minor, Bitmap productImage)
     {
+        CandiesApplication.get().setLastNotificationDate(new Date());
+
         Bundle infoBundle = new Bundle();
         infoBundle.putString(IntentParameters.UUID,uuid);
         infoBundle.putString(IntentParameters.MAJOR,major);
@@ -119,9 +123,7 @@ public class Util
     }
 
     public static void scheduleReceiver(Context context, Class receiver) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.MINUTE, 30);
+        Calendar calendar = getDefaultIntervalCalendar();
 
         AlarmManager alarmManager = (AlarmManager)context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Intent receiverIntent = new Intent(context.getApplicationContext(), receiver);
@@ -131,6 +133,14 @@ public class Util
                 calendar.getTimeInMillis(),
                 receiverPendent
         );
+    }
+
+    public static Calendar getDefaultIntervalCalendar() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.MINUTE, 30);
+
+        return calendar;
     }
 
     /**

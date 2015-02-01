@@ -19,15 +19,18 @@ import com.pogamadores.candies.service.BeaconDiscoverService;
 import com.pogamadores.candies.util.OkHttpStack;
 import com.pogamadores.candies.util.Util;
 
-import io.fabric.sdk.android.Fabric;
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
+import java.util.Calendar;
+import java.util.Date;
+
+import io.fabric.sdk.android.Fabric;
+
 public class CandiesApplication extends Application {
 
     private static final String UNBIND_FLAG = "UNBIND_FLAG";
-    private static final String TAG = CandiesApplication.class.getSimpleName();
     private CandieSQLiteDataSource dataSource;
     private static CandiesApplication app;
 
@@ -36,6 +39,7 @@ public class CandiesApplication extends Application {
     private BeaconManager beaconManager;
     private RequestQueue queue;
     private Beacon beacon;
+    private Date lastNotificationDate;
     private static GoogleApiClient mGoogleClient;
 
     public Beacon getBeacon() {
@@ -173,5 +177,21 @@ public class CandiesApplication extends Application {
      */
     public void stopRequest(String tag) {
         getQueue().cancelAll(tag);
+    }
+
+    public Date getLastNotificationDate() {
+        return lastNotificationDate;
+    }
+
+    public void setLastNotificationDate(Date lastNotificationDate) {
+        this.lastNotificationDate = lastNotificationDate;
+    }
+
+    public boolean shouldNotificate() {
+
+        if(lastNotificationDate == null) return !CandiesApplication.get().isFromUnbind();
+
+        Calendar calendar = Util.getDefaultIntervalCalendar();
+        return calendar.getTimeInMillis() >= System.currentTimeMillis() && !CandiesApplication.get().isFromUnbind();
     }
 }
