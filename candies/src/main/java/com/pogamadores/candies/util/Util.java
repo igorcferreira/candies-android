@@ -17,6 +17,7 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.R;
+import com.pogamadores.candies.broadcast.CancelNotificationReceiver;
 import com.pogamadores.candies.ui.activity.MainActivity;
 
 public class Util {
@@ -36,6 +37,17 @@ public class Util {
         infoBundle.putString(IntentParameters.MINOR, uri.getQueryParameter("minor"));
         infoBundle.putInt(IntentParameters.REQUEST_CODE, RequestCode.PURCHASE);
 
+        Intent cancelIntent = new Intent(context.getApplicationContext(), CancelNotificationReceiver.class);
+        cancelIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+        cancelIntent.putExtras(infoBundle);
+
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(
+                context.getApplicationContext(),
+                0,
+                cancelIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT
+        );
+
         Intent intent = new Intent(context, MainActivity.class);
         intent.putExtras(infoBundle);
 
@@ -50,6 +62,7 @@ public class Util {
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setLocalOnly(true)
                 .setAutoCancel(true)
+                .setDeleteIntent(cancelPendingIntent)
                 .setCategory(NotificationCompat.CATEGORY_PROMO)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentText(context.getString(R.string.notification_generic_message))

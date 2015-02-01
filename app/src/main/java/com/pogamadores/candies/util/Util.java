@@ -17,6 +17,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.R;
+import com.pogamadores.candies.broadcast.CancelNotificationReceiver;
 import com.pogamadores.candies.broadcast.PaymentOrderReceiver;
 
 import org.altbeacon.beacon.Beacon;
@@ -48,7 +49,7 @@ public class Util
         infoBundle.putString(IntentParameters.MAJOR,major);
         infoBundle.putString(IntentParameters.MINOR,minor);
 
-        Intent cancelIntent = new Intent(context.getApplicationContext(), PaymentOrderReceiver.class);
+        Intent cancelIntent = new Intent(context.getApplicationContext(), CancelNotificationReceiver.class);
         cancelIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
         cancelIntent.putExtras(infoBundle);
 
