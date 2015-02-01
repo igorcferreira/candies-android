@@ -24,5 +24,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/hello_square" />
+
+        <ImageView
+            android:id="@+id/imgPurchase"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_logo_paypal"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/action_purchase"
+            android:visibility="gone"
+            tools:visibility="visible"/>
     </LinearLayout>
 </RelativeLayout>

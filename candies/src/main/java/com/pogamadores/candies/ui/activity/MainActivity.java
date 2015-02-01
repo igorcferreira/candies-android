@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.wearable.view.WatchViewStub;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -26,7 +27,8 @@ public class MainActivity extends Activity implements DataApi.DataListener {
     private TextView mTextView;
     private GoogleApiClient mGoogleClient;
     private WatchViewStub mStub;
-    private ProgressBar mProgess;
+    private ProgressBar mProgress;
+    private ImageView mBuyImage;
 
     private void setUpGoogleClientIfNeeded(final Intent intent) {
         if (mGoogleClient == null) {
@@ -39,9 +41,9 @@ public class MainActivity extends Activity implements DataApi.DataListener {
                 public void onConnected(Bundle bundle) {
                     if (intent != null && intent.getExtras() != null && intent.hasExtra(IntentParameters.REQUEST_CODE)) {
                         Util.requestPurchase(mGoogleClient, "/purchase/candies", intent.getExtras());
-                        updateLabel(getString(R.string.msg_purchasing),true);
+                        updateLabel(getString(R.string.msg_purchasing),true, false);
                     } else {
-                        updateLabel(getString(R.string.msg_look_up), false);
+                        updateLabel(getString(R.string.msg_look_up), false, false);
                     }
                     Wearable.DataApi.addListener(mGoogleClient, MainActivity.this);
                 }
@@ -62,12 +64,13 @@ public class MainActivity extends Activity implements DataApi.DataListener {
         }
     }
 
-    protected void updateLabel(final String label, final boolean progressVisible) {
+    protected void updateLabel(final String label, final boolean progressVisible, final boolean imageVisible) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mTextView.setText(label);
-                mProgess.setVisibility(progressVisible?View.VISIBLE:View.GONE);
+                mProgress.setVisibility(progressVisible ? View.VISIBLE : View.GONE);
+                mBuyImage.setVisibility(imageVisible ? View.VISIBLE : View.GONE);
             }
         });
     }
@@ -105,8 +108,10 @@ public class MainActivity extends Activity implements DataApi.DataListener {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mTextView = (TextView) stub.findViewById(R.id.text);
-                mProgess = ((ProgressBar) stub.findViewById(R.id.progress));
-                mProgess.setVisibility(View.GONE);
+                mProgress = ((ProgressBar) stub.findViewById(R.id.progress));
+                mBuyImage = ((ImageView) stub.findViewById(R.id.imgPurchase));
+                mBuyImage.setVisibility(View.GONE);
+                mProgress.setVisibility(View.GONE);
                 mTextView.setText(getString(R.string.msg_look_up));
                 setUpGoogleClientIfNeeded(getIntent());
                 Util.sendMessage(
@@ -124,7 +129,7 @@ public class MainActivity extends Activity implements DataApi.DataListener {
 
             final String newMessage = Util.extractMessage(event, "/new/candies/beacon");
             if (newMessage != null) {
-                updateLabel(getString(R.string.touch_to_buy), false);
+                updateLabel(getString(R.string.touch_to_buy), false, true);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -152,11 +157,11 @@ public class MainActivity extends Activity implements DataApi.DataListener {
             String message = Util.extractMessage(event, "/candies/payment");
             if (message != null) {
                 switch (message) {
-                    case "token": updateLabel(getString(R.string.please_authorize), false); break;
-                    case "success": updateLabel(getString(R.string.msg_success), false); break;
+                    case "token": updateLabel(getString(R.string.please_authorize), false, true); break;
+                    case "success": updateLabel(getString(R.string.msg_success), false, false); break;
                     case "start":
-                    case "purchasing": updateLabel(getString(R.string.msg_purchasing), true); break;
-                    case "fail": updateLabel(getString(R.string.msg_error), false); break;
+                    case "purchasing": updateLabel(getString(R.string.msg_purchasing), true, false); break;
+                    case "fail": updateLabel(getString(R.string.msg_error), false, false); break;
                 }
                 mStub.setOnClickListener(null);
                 return;

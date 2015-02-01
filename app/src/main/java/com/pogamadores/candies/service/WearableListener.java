@@ -100,6 +100,15 @@ public class WearableListener extends WearableListenerService {
                         );
                     }
                 } else if(event.getDataItem().getUri().getPath().equalsIgnoreCase("/candies/beacon")) {
+
+                    if(CandiesApplication.get().getBeacon() != null) {
+                        Util.informNewBeacon(
+                                mGoogleClient,
+                                "/new/candies/beacon",
+                                CandiesApplication.get().getBeacon()
+                        );
+                    }
+
                     getApplicationContext().startService(new Intent(getApplicationContext(), BeaconDiscoverService.class));
                 } else if(event.getDataItem().getUri().getPath().equalsIgnoreCase("/candies/notification")) {
                     Util.cancelNotification(getApplicationContext());

@@ -10,5 +10,5 @@
     <string name="msg_purchasing">Compra sendo realizada</string>
     <string name="msg_success">Compra efetuada, retire seus doces</string>
     <string name="please_authorize">Por favor, autorize o pagamento no seu celular</string>
-    <string name="touch_to_buy">Há uma candie machine próxima! Toque na tela para comprar doces!</string>
+    <string name="touch_to_buy">Toque para comprar doces!</string>
 </resources>

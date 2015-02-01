@@ -7,7 +7,7 @@
     <string name="action_purchase">Purchase</string>
     <string name="notification_generic_message">There is a candy machine close to you! Enjoy it!</string>
     <string name="notification_generic_title">Candy</string>
-    <string name="touch_to_buy">Candie machine near. Touch the screen to buy!</string>
+    <string name="touch_to_buy">Touch to buy candies!</string>
     <string name="please_authorize">Please, go to your phone to authorize the payment</string>
     <string name="msg_success">Go get some candies! \\o/</string>
     <string name="msg_purchasing">Purchasing</string>
