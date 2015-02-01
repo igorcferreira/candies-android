@@ -46,6 +46,9 @@ public class Util
 
     public static void dispatchNotification(Context context, String uuid, String major, String minor, Bitmap productImage)
     {
+        if(!CandiesApplication.get().shouldNotificate())
+            return;
+
         CandiesApplication.get().setLastNotificationDate(new Date());
 
         Bundle infoBundle = new Bundle();
@@ -123,7 +126,7 @@ public class Util
     }
 
     public static void scheduleReceiver(Context context, Class receiver) {
-        Calendar calendar = getDefaultIntervalCalendar();
+        Calendar calendar = getDefaultIntervalCalendar(System.currentTimeMillis());
 
         AlarmManager alarmManager = (AlarmManager)context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Intent receiverIntent = new Intent(context.getApplicationContext(), receiver);
@@ -135,9 +138,9 @@ public class Util
         );
     }
 
-    public static Calendar getDefaultIntervalCalendar() {
+    public static Calendar getDefaultIntervalCalendar(long initialTime) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.setTimeInMillis(initialTime);
         calendar.set(Calendar.MINUTE, 30);
 
         return calendar;

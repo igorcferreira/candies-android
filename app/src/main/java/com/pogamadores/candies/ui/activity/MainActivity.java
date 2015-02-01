@@ -1,5 +1,6 @@
 package com.pogamadores.candies.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -7,9 +8,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.pogamadores.candies.R;
+import com.pogamadores.candies.application.CandiesApplication;
+import com.pogamadores.candies.service.BeaconDiscoverService;
 import com.pogamadores.candies.ui.fragment.MainFragment;
+import com.pogamadores.candies.util.Constants;
 
 public class MainActivity extends ActionBarActivity {
+
+    private int settingsTouch = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +33,17 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        settingsTouch = 0;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        if(!Constants.LIVE_ENVIRONMENT) {
+            getMenuInflater().inflate(R.menu.menu_main, menu);
+        }
         return true;
     }
 
@@ -42,6 +56,18 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
+            if(!Constants.LIVE_ENVIRONMENT) {
+                settingsTouch++;
+                if (settingsTouch == 3) {
+                    CandiesApplication.get().setLastNotificationDate(null);
+                    CandiesApplication.get().setBeacon(null);
+                    Intent service = new Intent(getApplicationContext(), BeaconDiscoverService.class);
+                    if (getIntent() != null && getIntent().getExtras() != null)
+                        service.putExtras(getIntent().getExtras());
+                    getApplicationContext().startService(service);
+                }
+            }
             return true;
         }
 

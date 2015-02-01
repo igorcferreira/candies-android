@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -39,6 +40,8 @@ public class MainFragment extends Fragment {
     private BeaconDiscoverService beaconService;
     private PaymentService paymentService;
     private GoogleApiClient mGoogleClient;
+    private View mSearchingContainer;
+    private ProgressBar mProgress;
 
     public MainFragment() {}
 
@@ -46,8 +49,10 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        mSearchingContainer = rootView.findViewById(R.id.searchContainer);
         mTvInformation = ((TextView) rootView.findViewById(R.id.tvInformation));
         mBtPurchase = ((Button) rootView.findViewById(R.id.btPurchase));
+        mProgress = ((ProgressBar) rootView.findViewById(R.id.progress));
         mBtPurchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,11 +156,15 @@ public class MainFragment extends Fragment {
     private void setBeaconNotFoundScreen() {
         mTvInformation.setText(getString(R.string.message_not_close_machine));
         mBtPurchase.setVisibility(View.GONE);
+        mSearchingContainer.setVisibility(View.VISIBLE);
+        mProgress.setVisibility(View.GONE);
     }
 
     private void setBeaconFoundScreen() {
         mTvInformation.setText(getString(R.string.message_machine_close));
         mBtPurchase.setVisibility(View.VISIBLE);
+        mSearchingContainer.setVisibility(View.GONE);
+        mProgress.setVisibility(View.GONE);
     }
 
     private void searchBeacon() {
@@ -163,7 +172,7 @@ public class MainFragment extends Fragment {
             Intent service = new Intent(getActivity().getApplicationContext(), BeaconDiscoverService.class);
             if (getActivity().getIntent() != null && getActivity().getIntent().getExtras() != null)
                 service.putExtras(getActivity().getIntent().getExtras());
-            getActivity().startService(service);
+            getActivity().getApplicationContext().startService(service);
         }
     }
 
@@ -206,12 +215,29 @@ public class MainFragment extends Fragment {
     private PaymentService.PaymentStepsListener paymentStepsListener = new PaymentService.PaymentStepsListener() {
         @Override
         public void onPaymentStarted(Token token, double value) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mProgress.setVisibility(View.VISIBLE);
+                    mTvInformation.setVisibility(View.GONE);
+                    mBtPurchase.setVisibility(View.GONE);
+                }
+            });
             setUpGoogleClientIfNeeded();
             Util.sendMessage(mGoogleClient, "/candies/payment/started", "New payment");
         }
 
         @Override
         public void onPaymentFinished(Token token, double value, boolean successful, String message) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mProgress.setVisibility(View.GONE);
+                    mTvInformation.setVisibility(View.VISIBLE);
+                    mBtPurchase.setVisibility(View.VISIBLE);
+                }
+            });
+            setUpGoogleClientIfNeeded();
             Util.sendMessage(mGoogleClient, "/candies/payment/finished",(successful?"true":"false"));
         }
     };

@@ -18,9 +18,12 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.R;
+import com.pogamadores.candies.application.CandiesApplication;
 import com.pogamadores.candies.broadcast.CancelNotificationReceiver;
 import com.pogamadores.candies.ui.activity.MainActivity;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class Util {
@@ -34,6 +37,11 @@ public class Util {
     }
 
     public static void dispatchNotification(Context context, Uri uri) {
+
+        if(!CandiesApplication.get().shouldNotificate())
+            return;
+
+        CandiesApplication.get().setLastNotificationDate(new Date());
 
         Bundle infoBundle = new Bundle();
         infoBundle.putString(IntentParameters.UUID, uri.getQueryParameter("uuid"));
@@ -117,5 +125,13 @@ public class Util {
             message = dataMapItem.getDataMap().getString("content");
         }
         return message;
+    }
+
+    public static Calendar getDefaultIntervalCalendar(long initialTime) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(initialTime);
+        calendar.set(Calendar.MINUTE, 30);
+
+        return calendar;
     }
 }

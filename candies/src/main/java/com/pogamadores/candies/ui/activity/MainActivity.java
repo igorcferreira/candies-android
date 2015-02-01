@@ -157,7 +157,7 @@ public class MainActivity extends Activity implements DataApi.DataListener {
             String message = Util.extractMessage(event, "/candies/payment");
             if (message != null) {
                 switch (message) {
-                    case "token": updateLabel(getString(R.string.please_authorize), false, true); break;
+                    case "token": updateLabel(getString(R.string.please_authorize), true, true); break;
                     case "success": updateLabel(getString(R.string.msg_success), false, false); break;
                     case "start":
                     case "purchasing": updateLabel(getString(R.string.msg_purchasing), true, false); break;

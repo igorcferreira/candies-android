@@ -191,7 +191,7 @@ public class CandiesApplication extends Application {
 
         if(lastNotificationDate == null) return !CandiesApplication.get().isFromUnbind();
 
-        Calendar calendar = Util.getDefaultIntervalCalendar();
+        Calendar calendar = Util.getDefaultIntervalCalendar(lastNotificationDate.getTime());
         return calendar.getTimeInMillis() >= System.currentTimeMillis() && !CandiesApplication.get().isFromUnbind();
     }
 }

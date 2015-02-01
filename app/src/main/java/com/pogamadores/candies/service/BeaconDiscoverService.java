@@ -151,17 +151,15 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                             }
                         } else
                             onIteration = false;
-                        if (CandiesApplication.get().shouldNotificate()) {
-                            setUpGoogleClientIfNeeded();
-                            Util.informNewBeacon(mGoogleClient, "/new/candies/beacon", rangedBeacon);
-                            Util.dispatchNotification(
-                                    getApplicationContext(),
-                                    rangedBeacon.getId1().toString(),
-                                    rangedBeacon.getId2().toString(),
-                                    rangedBeacon.getId3().toString(),
-                                    R.drawable.ic_launcher
-                            );
-                        }
+                        setUpGoogleClientIfNeeded();
+                        Util.informNewBeacon(mGoogleClient, "/new/candies/beacon", rangedBeacon);
+                        Util.dispatchNotification(
+                                getApplicationContext(),
+                                rangedBeacon.getId1().toString(),
+                                rangedBeacon.getId2().toString(),
+                                rangedBeacon.getId3().toString(),
+                                R.drawable.ic_launcher
+                        );
                         CandiesApplication.get().setFromUnbind(false);
                         finishService();
                         return;
