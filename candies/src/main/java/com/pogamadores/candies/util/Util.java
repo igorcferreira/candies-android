@@ -3,6 +3,7 @@ package com.pogamadores.candies.util;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -20,13 +21,16 @@ import com.pogamadores.candies.R;
 import com.pogamadores.candies.broadcast.CancelNotificationReceiver;
 import com.pogamadores.candies.ui.activity.MainActivity;
 
+import java.util.List;
+
 public class Util {
     public static final int NOTIFICATION_ID = 23156;
 
     public static void cancelNotification(Context context)
     {
-        NotificationManagerCompat manager = NotificationManagerCompat.from(context.getApplicationContext());
-        manager.cancel(NOTIFICATION_ID);
+        NotificationManagerCompat
+                .from(context.getApplicationContext())
+                .cancel(NOTIFICATION_ID);
     }
 
     public static void dispatchNotification(Context context, Uri uri) {
@@ -52,13 +56,13 @@ public class Util {
         intent.putExtras(infoBundle);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
-                context,
+                context.getApplicationContext(),
                 RequestCode.PURCHASE,
                 intent,
                 PendingIntent.FLAG_CANCEL_CURRENT
         );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context.getApplicationContext())
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setLocalOnly(true)
                 .setAutoCancel(true)
@@ -74,7 +78,7 @@ public class Util {
                 .extend(builder)
                 .build();
 
-         NotificationManagerCompat.from(context)
+         NotificationManagerCompat.from(context.getApplicationContext())
                 .notify(NOTIFICATION_ID, notification);
     }
 
@@ -109,13 +113,10 @@ public class Util {
     }
 
     public static boolean isForeground(Context context, String myPackage){
-
-        return false;
-
-//        ActivityManager manager = (ActivityManager) context.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-//        List< ActivityManager.RunningTaskInfo > runningTaskInfo = manager.getRunningTasks(Integer.MAX_VALUE);
-//        ComponentName componentInfo = runningTaskInfo.get(0).topActivity;
-//        return componentInfo.getPackageName().equals(myPackage);
+        ActivityManager manager = (ActivityManager) context.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        List< ActivityManager.RunningTaskInfo > runningTaskInfo = manager.getRunningTasks(Integer.MAX_VALUE);
+        ComponentName componentInfo = runningTaskInfo.get(0).topActivity;
+        return componentInfo.getPackageName().equals(myPackage);
     }
 
     public static String extractMessage(DataEvent event, String path) {

@@ -24,6 +24,7 @@ public class MainActivity extends Activity implements DataApi.DataListener {
 
     private TextView mTextView;
     private GoogleApiClient mGoogleClient;
+    private WatchViewStub mStub;
 
     private void setUpGoogleClientIfNeeded(final Intent intent) {
         if (mGoogleClient == null) {
@@ -36,9 +37,9 @@ public class MainActivity extends Activity implements DataApi.DataListener {
                 public void onConnected(Bundle bundle) {
                     if (intent != null && intent.getExtras() != null && intent.hasExtra(IntentParameters.REQUEST_CODE)) {
                         Util.requestPurchase(mGoogleClient, "/purchase/candies", intent.getExtras());
-                        updateLabel("Compra sendo realizada");
+                        updateLabel(getString(R.string.msg_purchasing));
                     } else {
-                        updateLabel("Aproxime-se de uma máquina");
+                        updateLabel(getString(R.string.msg_look_up));
                     }
                     Wearable.DataApi.addListener(mGoogleClient, MainActivity.this);
                 }
@@ -96,8 +97,8 @@ public class MainActivity extends Activity implements DataApi.DataListener {
 
         Util.cancelNotification(getApplicationContext());
 
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
-        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
+        mStub = (WatchViewStub) findViewById(R.id.watch_view_stub);
+        mStub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mTextView = (TextView) stub.findViewById(R.id.text);
@@ -117,11 +118,11 @@ public class MainActivity extends Activity implements DataApi.DataListener {
 
             final String newMessage = Util.extractMessage(event, "/new/candies/beacon");
             if (newMessage != null) {
-                updateLabel("Novo beacon");
+                updateLabel(getString(R.string.touch_to_buy));
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mTextView.setOnClickListener(new View.OnClickListener() {
+                        mStub.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
 
@@ -134,7 +135,7 @@ public class MainActivity extends Activity implements DataApi.DataListener {
                                 infoBundle.putInt(IntentParameters.REQUEST_CODE, RequestCode.PURCHASE);
 
                                 Util.requestPurchase(mGoogleClient, "/purchase/candies", infoBundle);
-                                mTextView.setOnClickListener(null);
+                                mStub.setOnClickListener(null);
                             }
                         });
                     }
@@ -144,7 +145,12 @@ public class MainActivity extends Activity implements DataApi.DataListener {
 
             String message = Util.extractMessage(event, "/candies/payment");
             if (message != null) {
-                updateLabel(message);
+                switch (message) {
+                    case "token": updateLabel(getString(R.string.please_authorize)); break;
+                    case "success": updateLabel(getString(R.string.msg_success)); break;
+                    case "start": updateLabel(getString(R.string.msg_purchasing)); break;
+                    case "fail": updateLabel(getString(R.string.msg_error)); break;
+                }
                 return;
             }
 

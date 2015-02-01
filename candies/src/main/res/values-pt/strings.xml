@@ -5,4 +5,10 @@
     <string name="action_purchase">Comprar</string>
     <string name="notification_generic_message">Há uma máquina de doces próximo! Aproveite!</string>
     <string name="notification_generic_title">Doce</string>
+    <string name="msg_error">Erro na compra. Por favor, tente novamente pelo seu celular</string>
+    <string name="msg_look_up">Aproxime-se de uma máquina</string>
+    <string name="msg_purchasing">Compra sendo realizada</string>
+    <string name="msg_success">Compra efetuada, retire seus doces</string>
+    <string name="please_authorize">Por favor, autorize o pagamento no seu celular</string>
+    <string name="touch_to_buy">Há uma candie machine próxima! Toque na tela para comprar doces!</string>
 </resources>
