@@ -68,9 +68,11 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
     public void onDestroy() {
         if(beaconManager != null) {
             try {
-                if(region != null) beaconManager.stopMonitoringBeaconsInRegion(region);
+                if(region != null) beaconManager.stopRangingBeaconsInRegion(region);
                 beaconManager.unbind(this);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+                Log.e(TAG, "Beacon Manager Error", ignored);
+            }
         }
         super.onDestroy();
     }
