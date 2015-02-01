@@ -10,6 +10,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
@@ -18,6 +19,7 @@ import com.pogamadores.candies.service.BeaconDiscoverService;
 import com.pogamadores.candies.util.OkHttpStack;
 import com.pogamadores.candies.util.Util;
 
+import io.fabric.sdk.android.Fabric;
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
@@ -47,6 +49,7 @@ public class CandiesApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         app = this;
         backgroundPowerSaver = new BackgroundPowerSaver(app);
         beaconManager = BeaconManager.getInstanceForApplication(app);
