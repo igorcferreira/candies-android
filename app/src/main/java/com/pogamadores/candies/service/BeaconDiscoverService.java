@@ -65,6 +65,17 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
     }
 
     @Override
+    public void onDestroy() {
+        if(beaconManager != null) {
+            try {
+                if(region != null) beaconManager.stopMonitoringBeaconsInRegion(region);
+                beaconManager.unbind(this);
+            } catch (Exception ignored) {}
+        }
+        super.onDestroy();
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
     }

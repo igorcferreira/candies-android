@@ -40,6 +40,7 @@ public class MainActivity extends Activity implements DataApi.DataListener {
                     } else {
                         updateLabel("Aproxime-se de uma máquina");
                     }
+                    Wearable.DataApi.addListener(mGoogleClient, MainActivity.this);
                 }
 
                 @Override
@@ -76,6 +77,7 @@ public class MainActivity extends Activity implements DataApi.DataListener {
     @Override
     protected void onResume() {
         super.onResume();
+        Util.cancelNotification(getApplicationContext());
         if (mGoogleClient != null) Wearable.DataApi.addListener(mGoogleClient, this);
     }
 
@@ -91,6 +93,8 @@ public class MainActivity extends Activity implements DataApi.DataListener {
         setContentView(R.layout.activity_main);
 
         NotificationManagerCompat.from(getApplicationContext()).cancel(Util.NOTIFICATION_ID);
+
+        Util.cancelNotification(getApplicationContext());
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
@@ -141,6 +145,12 @@ public class MainActivity extends Activity implements DataApi.DataListener {
             String message = Util.extractMessage(event, "/candies/payment");
             if (message != null) {
                 updateLabel(message);
+                return;
+            }
+
+            message = Util.extractMessage(event, "/candies/notification");
+            if(message != null && message.equalsIgnoreCase("cancel")) {
+                Util.cancelNotification(getApplicationContext());
                 return;
             }
         }

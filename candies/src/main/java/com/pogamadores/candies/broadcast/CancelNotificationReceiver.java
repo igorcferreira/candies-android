@@ -3,14 +3,12 @@ package com.pogamadores.candies.broadcast;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import android.os.Bundle;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
 import com.pogamadores.candies.util.Util;
-
-import java.util.concurrent.TimeUnit;
 
 public class CancelNotificationReceiver extends BroadcastReceiver {
 
@@ -22,18 +20,27 @@ public class CancelNotificationReceiver extends BroadcastReceiver {
     private void setUpGoogleClientIfNeeded(Context context) {
         if (mGoogleClient == null) {
 
-            GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context.getApplicationContext())
+            mGoogleClient = new GoogleApiClient.Builder(context.getApplicationContext())
                     .addApi(Wearable.API)
                     .build();
 
-            ConnectionResult connectionResult =
-                    googleApiClient.blockingConnect(30, TimeUnit.SECONDS);
+            mGoogleClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                @Override
+                public void onConnected(Bundle bundle) {}
+                @Override
+                public void onConnectionSuspended(int i) {
+                    mGoogleClient = null;
+                }
+            });
 
-            if (!connectionResult.isSuccess()) {
-                Log.e(CancelNotificationReceiver.class.getSimpleName(), "Failed to connect to GoogleApiClient.");
-            } else {
-                mGoogleClient = googleApiClient;
-            }
+            mGoogleClient.registerConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                @Override
+                public void onConnectionFailed(ConnectionResult connectionResult) {
+                    mGoogleClient = null;
+                }
+            });
+
+            mGoogleClient.connect();
         }
     }
 
