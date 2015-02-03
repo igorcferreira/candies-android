@@ -88,10 +88,8 @@ public class WearableListener extends WearableListenerService {
                 } else if(event.getDataItem().getUri().getPath().equalsIgnoreCase("/candies/beacon")) {
                     Beacon beacon = CandiesApplication.get().getBeacon();
                     if(beacon == null) {
-                        if(!Util.isServiceRunning(BeaconDiscoverService.class, getApplicationContext())) {
-                            Intent service = new Intent(getApplicationContext(), BeaconDiscoverService.class);
-                            getApplicationContext().startService(service);
-                        }
+                        Intent service = new Intent(getApplicationContext(), BeaconDiscoverService.class);
+                        getApplicationContext().startService(service);
                     } else {
                         Util.informNewBeacon(
                                 mGoogleClient,
