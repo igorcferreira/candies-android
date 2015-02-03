@@ -54,6 +54,9 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             backgroundPowerSaver = new BackgroundPowerSaver(CandiesApplication.get());
             beaconManager = BeaconManager.getInstanceForApplication(CandiesApplication.get());
             region = new Region("regionid", null, null, null);
+            if(beaconManager.getBeaconParsers() != null) {
+                beaconManager.getBeaconParsers().clear();
+            }
             beaconManager.getBeaconParsers().add(new BeaconParser().
                     setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
             try {
