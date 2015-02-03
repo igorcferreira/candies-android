@@ -46,21 +46,31 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
     private CandiesApplication application;
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if(region == null) {
-            beaconManager = BeaconManager.getInstanceForApplication(CandiesApplication.get());
-            region = new Region("regionid", null, null, null);
+    public void onCreate() {
+        super.onCreate();
+        configBeaconManager();
+    }
 
-            if(beaconManager.getBeaconParsers() != null && beaconManager.getBeaconParsers().size() == 1) {
+    private void configBeaconManager() {
+        if(beaconManager == null) {
+            beaconManager = BeaconManager.getInstanceForApplication(CandiesApplication.get());
+            if (beaconManager.getBeaconParsers() != null && beaconManager.getBeaconParsers().size() == 1) {
                 beaconManager.getBeaconParsers().add(new BeaconParser().
                         setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
             }
-
             try {
                 beaconManager.bind(this);
             } catch (Exception error) {
                 Log.e(TAG, "Beacon manager bind error", error);
             }
+        }
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if(region == null) {
+            configBeaconManager();
+            region = new Region("regionid", null, null, null);
             if(application == null)
                 application = CandiesApplication.get();
             application.setBeacon(null);
@@ -74,7 +84,6 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
         if(beaconManager != null) {
             try {
                 if(region != null) beaconManager.stopRangingBeaconsInRegion(region);
-                beaconManager.unbind(this);
             } catch (Exception ignored) {
                 Log.e(TAG, "Beacon Manager Error", ignored);
             }
@@ -189,8 +198,6 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             } catch (Exception ignored) {
                 Log.e(TAG, "Beacon Manager Error", ignored);
             }
-            beaconManager.unbind(this);
-            beaconManager = null;
             region = null;
         }
         Util.scheduleReceiver(getApplicationContext(), StartServiceReceiver.class);
