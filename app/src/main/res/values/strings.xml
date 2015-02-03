@@ -9,5 +9,6 @@
     <string name="message_not_close_machine">Search for a candy machine</string>
     <string name="title_activity_permission">Permission</string>
     <string name="get_token_generic_error">An unexpected error occur. Please, try again.</string>
+    <string name="msg_success">Go get some candies! \\o/</string>
 
 </resources>

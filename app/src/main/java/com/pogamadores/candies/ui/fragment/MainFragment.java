@@ -42,6 +42,7 @@ public class MainFragment extends Fragment {
     private GoogleApiClient mGoogleClient;
     private View mSearchingContainer;
     private ProgressBar mProgress;
+    private View mFinalMessage;
 
     public MainFragment() {}
 
@@ -53,6 +54,13 @@ public class MainFragment extends Fragment {
         mTvInformation = ((TextView) rootView.findViewById(R.id.tvInformation));
         mBtPurchase = ((Button) rootView.findViewById(R.id.btPurchase));
         mProgress = ((ProgressBar) rootView.findViewById(R.id.progress));
+        mFinalMessage = rootView.findViewById(R.id.finalMessage);
+        mFinalMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
+            }
+        });
         mBtPurchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -235,6 +243,7 @@ public class MainFragment extends Fragment {
                     mProgress.setVisibility(View.GONE);
                     mTvInformation.setVisibility(View.VISIBLE);
                     mBtPurchase.setVisibility(View.VISIBLE);
+                    mFinalMessage.setVisibility(View.VISIBLE);
                 }
             });
             setUpGoogleClientIfNeeded();
