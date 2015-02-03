@@ -20,7 +20,6 @@ import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
-import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,20 +44,18 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
     private List<DiscoverListener> listenerToRemove;
     private BeaconManager beaconManager;
     private CandiesApplication application;
-    @SuppressWarnings({"FieldCanBeLocal", "UnusedDeclaration"})
-    private BackgroundPowerSaver backgroundPowerSaver;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(region == null) {
-            backgroundPowerSaver = new BackgroundPowerSaver(CandiesApplication.get());
             beaconManager = BeaconManager.getInstanceForApplication(CandiesApplication.get());
             region = new Region("regionid", null, null, null);
-            if(beaconManager.getBeaconParsers() != null) {
-                beaconManager.getBeaconParsers().clear();
+
+            if(beaconManager.getBeaconParsers() != null && beaconManager.getBeaconParsers().size() == 1) {
+                beaconManager.getBeaconParsers().add(new BeaconParser().
+                        setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
             }
-            beaconManager.getBeaconParsers().add(new BeaconParser().
-                    setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
+
             try {
                 beaconManager.bind(this);
             } catch (Exception error) {
@@ -69,6 +66,7 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             application.setBeacon(null);
         }
         return START_STICKY;
+
     }
 
     @Override
@@ -192,7 +190,6 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
                 Log.e(TAG, "Beacon Manager Error", ignored);
             }
             beaconManager.unbind(this);
-            backgroundPowerSaver = null;
             beaconManager = null;
             region = null;
         }
