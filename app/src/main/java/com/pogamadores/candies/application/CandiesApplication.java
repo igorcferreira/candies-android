@@ -20,8 +20,6 @@ import com.pogamadores.candies.util.OkHttpStack;
 import com.pogamadores.candies.util.Util;
 
 import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -34,9 +32,6 @@ public class CandiesApplication extends Application {
     private CandieSQLiteDataSource dataSource;
     private static CandiesApplication app;
 
-    @SuppressWarnings({"FieldCanBeLocal", "UnusedDeclaration"})
-    private BackgroundPowerSaver backgroundPowerSaver;
-    private BeaconManager beaconManager;
     private RequestQueue queue;
     private Beacon beacon;
     private Date lastNotificationDate;
@@ -55,8 +50,6 @@ public class CandiesApplication extends Application {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         app = this;
-        backgroundPowerSaver = new BackgroundPowerSaver(app);
-        beaconManager = BeaconManager.getInstanceForApplication(app);
         dataSource = new CandieSQLiteDataSource(app);
         if(!Util.isServiceRunning(BeaconDiscoverService.class, getApplicationContext()))
             startService(new Intent(getApplicationContext(), BeaconDiscoverService.class));
@@ -102,10 +95,6 @@ public class CandiesApplication extends Application {
             return null;
         else
             return app.dataSource;
-    }
-
-    public BeaconManager getBeaconManager() {
-        return beaconManager;
     }
 
     public SharedPreferences getSharedPreferences() {
