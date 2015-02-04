@@ -35,6 +35,7 @@ import org.altbeacon.beacon.Beacon;
  */
 public class MainFragment extends Fragment {
 
+    private static final String IS_PURCHASING = "IS_PURCHASING";
     private TextView mTvInformation;
     private Button mBtPurchase;
     private BeaconDiscoverService beaconService;
@@ -43,12 +44,24 @@ public class MainFragment extends Fragment {
     private View mSearchingContainer;
     private ProgressBar mProgress;
     private View mFinalMessage;
+    private boolean purchasing = false;
 
     public MainFragment() {}
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(IS_PURCHASING, purchasing);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        purchasing = false;
+        if(savedInstanceState != null)
+            purchasing = savedInstanceState.getBoolean(IS_PURCHASING, false);
+
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mSearchingContainer = rootView.findViewById(R.id.searchContainer);
         mTvInformation = ((TextView) rootView.findViewById(R.id.tvInformation));
@@ -61,10 +74,13 @@ public class MainFragment extends Fragment {
                 getActivity().finish();
             }
         });
+        mFinalMessage.bringToFront();
+        mFinalMessage.setVisibility(View.GONE);
         mBtPurchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle infoBundle = null;
+                purchasing = true;
                 if(beaconService != null && beaconService.getBeacon() != null) {
                     Beacon beacon = beaconService.getBeacon();
 
@@ -170,9 +186,8 @@ public class MainFragment extends Fragment {
 
     private void setBeaconFoundScreen() {
         mTvInformation.setText(getString(R.string.message_machine_close));
-        mBtPurchase.setVisibility(View.VISIBLE);
         mSearchingContainer.setVisibility(View.GONE);
-        mProgress.setVisibility(View.GONE);
+        configView();
     }
 
     private void searchBeacon() {
@@ -181,6 +196,18 @@ public class MainFragment extends Fragment {
             if (getActivity().getIntent() != null && getActivity().getIntent().getExtras() != null)
                 service.putExtras(getActivity().getIntent().getExtras());
             getActivity().getApplicationContext().startService(service);
+        }
+    }
+
+    private void configView() {
+        if(purchasing) {
+            mProgress.setVisibility(View.VISIBLE);
+            mTvInformation.setVisibility(View.GONE);
+            mBtPurchase.setVisibility(View.GONE);
+        } else {
+            mProgress.setVisibility(View.GONE);
+            mTvInformation.setVisibility(View.VISIBLE);
+            mBtPurchase.setVisibility(View.VISIBLE);
         }
     }
 
@@ -223,12 +250,11 @@ public class MainFragment extends Fragment {
     private PaymentService.PaymentStepsListener paymentStepsListener = new PaymentService.PaymentStepsListener() {
         @Override
         public void onPaymentStarted(Token token, double value) {
+            purchasing = true;
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mProgress.setVisibility(View.VISIBLE);
-                    mTvInformation.setVisibility(View.GONE);
-                    mBtPurchase.setVisibility(View.GONE);
+                    configView();
                 }
             });
             setUpGoogleClientIfNeeded();
@@ -237,10 +263,12 @@ public class MainFragment extends Fragment {
 
         @Override
         public void onPaymentFinished(Token token, double value, boolean successful, String message) {
+            purchasing = false;
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mProgress.setVisibility(View.GONE);
+                    mBtPurchase.setVisibility(View.GONE);
                     mFinalMessage.setVisibility(View.VISIBLE);
                 }
             });
@@ -254,6 +282,7 @@ public class MainFragment extends Fragment {
         @Override
         public void didDiscoverBeacon(Beacon beacon) {
             if(getActivity() != null) {
+                Util.cancelNotification(getActivity().getApplicationContext());
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

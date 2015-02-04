@@ -75,13 +75,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="gone"
         android:background="@android:color/white"
+        android:visibility="gone"
         tools:ignore="UseCompoundDrawables">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:textSize="18sp"
+            android:textStyle="bold"
             android:text="@string/msg_success"/>
 
         <ImageView
@@ -89,6 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_gravity="center_horizontal"
+            android:src="@drawable/machine"
             android:contentDescription="@string/app_name"/>
 
     </LinearLayout>
