@@ -241,11 +241,10 @@ public class MainFragment extends Fragment {
                 @Override
                 public void run() {
                     mProgress.setVisibility(View.GONE);
-                    mTvInformation.setVisibility(View.VISIBLE);
-                    mBtPurchase.setVisibility(View.VISIBLE);
                     mFinalMessage.setVisibility(View.VISIBLE);
                 }
             });
+
             setUpGoogleClientIfNeeded();
             Util.sendMessage(mGoogleClient, "/candies/payment/finished",(successful?"true":"false"));
         }

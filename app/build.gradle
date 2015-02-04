@@ -59,8 +59,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     wearApp project(':candies')
-    //noinspection GradleDynamicVersion
-    compile 'org.altbeacon:android-beacon-library:2+@aar'
+    compile(name:'android-beacon-library', ext:'aar')
     compile 'com.mcxiaoke.volley:library:1.0.9'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.android.support:appcompat-v7:21.0.3'

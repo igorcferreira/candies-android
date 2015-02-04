@@ -44,6 +44,7 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
     private List<DiscoverListener> listenerToRemove;
     private BeaconManager beaconManager;
     private CandiesApplication application;
+    private boolean onGoing = false;
 
     @Override
     public void onCreate() {
@@ -69,9 +70,12 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(region == null) {
-            configBeaconManager();
             region = new Region("regionid", null, null, null);
-            if(application == null)
+        }
+        if(!onGoing) {
+            onGoing = true;
+            configBeaconManager();
+            if (application == null)
                 application = CandiesApplication.get();
             application.setBeacon(null);
         }
@@ -84,6 +88,11 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
         if(beaconManager != null) {
             try {
                 if(region != null) beaconManager.stopRangingBeaconsInRegion(region);
+            } catch (Exception ignored) {
+                Log.e(TAG, "Beacon Manager Error", ignored);
+            }
+            try {
+                beaconManager.unbind(this);
             } catch (Exception ignored) {
                 Log.e(TAG, "Beacon Manager Error", ignored);
             }
@@ -198,8 +207,8 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             } catch (Exception ignored) {
                 Log.e(TAG, "Beacon Manager Error", ignored);
             }
-            region = null;
         }
+        onGoing = false;
         Util.scheduleReceiver(getApplicationContext(), StartServiceReceiver.class);
         stopSelf();
     }
