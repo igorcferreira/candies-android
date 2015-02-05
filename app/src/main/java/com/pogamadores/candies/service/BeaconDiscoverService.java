@@ -158,7 +158,7 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 for (Beacon rangedBeacon : beacons) {
                     if (application.getBeacon() == null) {
-                        if (rangedBeacon.getDistance() > 2.f)
+                        if (rangedBeacon.getDistance() > 5.f)
                             continue;
                         if(!Util.isMyBeacon(rangedBeacon))
                             continue;

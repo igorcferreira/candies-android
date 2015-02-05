@@ -182,6 +182,13 @@ public class MainFragment extends Fragment {
         mBtPurchase.setVisibility(View.GONE);
         mSearchingContainer.setVisibility(View.VISIBLE);
         mProgress.setVisibility(View.GONE);
+
+        CandiesApplication.get().setLastNotificationDate(null);
+        CandiesApplication.get().setBeacon(null);
+        Intent service = new Intent(getActivity().getApplicationContext(), BeaconDiscoverService.class);
+        if (getActivity().getIntent() != null && getActivity().getIntent().getExtras() != null)
+            service.putExtras(getActivity().getIntent().getExtras());
+        getActivity().getApplicationContext().startService(service);
     }
 
     private void setBeaconFoundScreen() {
