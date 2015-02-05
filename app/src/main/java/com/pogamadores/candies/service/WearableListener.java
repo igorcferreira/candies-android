@@ -19,8 +19,6 @@ import com.pogamadores.candies.ui.activity.PermissionActivity;
 import com.pogamadores.candies.util.IntentParameters;
 import com.pogamadores.candies.util.Util;
 
-import org.altbeacon.beacon.Beacon;
-
 import java.util.concurrent.TimeUnit;
 
 public class WearableListener extends WearableListenerService {
@@ -84,18 +82,6 @@ public class WearableListener extends WearableListenerService {
                         Intent purchaseIntent = new Intent(getApplicationContext(), PaymentService.class);
                         purchaseIntent.putExtras(infoBundle);
                         getApplicationContext().startService(purchaseIntent);
-                    }
-                } else if(event.getDataItem().getUri().getPath().equalsIgnoreCase("/candies/beacon")) {
-                    Beacon beacon = CandiesApplication.get().getBeacon();
-                    if(beacon == null) {
-                        Intent service = new Intent(getApplicationContext(), BeaconDiscoverService.class);
-                        getApplicationContext().startService(service);
-                    } else {
-                        Util.informNewBeacon(
-                                mGoogleClient,
-                                "/new/candies/beacon",
-                                beacon
-                        );
                     }
                 } else if(event.getDataItem().getUri().getPath().equalsIgnoreCase("/candies/beacon")) {
 

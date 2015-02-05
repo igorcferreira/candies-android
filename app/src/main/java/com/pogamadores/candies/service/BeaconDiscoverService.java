@@ -96,6 +96,7 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             } catch (Exception ignored) {
                 Log.e(TAG, "Beacon Manager Error", ignored);
             }
+            beaconManager = null;
         }
         super.onDestroy();
     }

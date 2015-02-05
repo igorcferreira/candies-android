@@ -12,6 +12,9 @@ import com.pogamadores.candies.application.CandiesApplication;
 import com.pogamadores.candies.service.BeaconDiscoverService;
 import com.pogamadores.candies.ui.fragment.MainFragment;
 import com.pogamadores.candies.util.Constants;
+import com.pogamadores.candies.util.Util;
+
+import org.altbeacon.beacon.Beacon;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -57,17 +60,27 @@ public class MainActivity extends ActionBarActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
 
-            if(!Constants.LIVE_ENVIRONMENT) {
-                settingsTouch++;
-                if (settingsTouch == 3) {
-                    CandiesApplication.get().setLastNotificationDate(null);
-                    CandiesApplication.get().setBeacon(null);
-                    Intent service = new Intent(getApplicationContext(), BeaconDiscoverService.class);
-                    if (getIntent() != null && getIntent().getExtras() != null)
-                        service.putExtras(getIntent().getExtras());
-                    getApplicationContext().startService(service);
+            settingsTouch++;
+            if (settingsTouch == 3) {
+                CandiesApplication.get().setLastNotificationDate(null);
+                if(CandiesApplication.get().getBeacon() != null) {
+                    Beacon rangedBeacon = CandiesApplication.get().getBeacon();
+                    Util.informNewBeacon(CandiesApplication.getGoogleClient(), "/new/candies/beacon", rangedBeacon);
+                    Util.dispatchNotification(
+                            getApplicationContext(),
+                            rangedBeacon.getId1().toString(),
+                            rangedBeacon.getId2().toString(),
+                            rangedBeacon.getId3().toString(),
+                            R.drawable.ic_launcher
+                    );
                 }
+                CandiesApplication.get().setBeacon(null);
+                Intent service = new Intent(getApplicationContext(), BeaconDiscoverService.class);
+                if (getIntent() != null && getIntent().getExtras() != null)
+                    service.putExtras(getIntent().getExtras());
+                getApplicationContext().startService(service);
             }
+
             return true;
         }
 

@@ -43,6 +43,11 @@ public class MainActivity extends Activity implements DataApi.DataListener {
                         Util.requestPurchase(mGoogleClient, "/purchase/candies", intent.getExtras());
                         updateLabel(getString(R.string.msg_purchasing),true, false);
                     } else {
+                        Util.sendMessage(
+                                mGoogleClient,
+                                "/candies/beacon",
+                                "search"
+                        );
                         updateLabel(getString(R.string.msg_look_up), false, false);
                     }
                     Wearable.DataApi.addListener(mGoogleClient, MainActivity.this);
@@ -112,13 +117,7 @@ public class MainActivity extends Activity implements DataApi.DataListener {
                 mBuyImage = ((ImageView) stub.findViewById(R.id.imgPurchase));
                 mBuyImage.setVisibility(View.GONE);
                 mProgress.setVisibility(View.GONE);
-                mTextView.setText(getString(R.string.msg_look_up));
                 setUpGoogleClientIfNeeded(getIntent());
-                Util.sendMessage(
-                        mGoogleClient,
-                        "/candies/beacon",
-                        "search"
-                );
             }
         });
     }
