@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.PutDataMapRequest;
@@ -108,7 +109,13 @@ public class Util
         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
         putDataMapRequest.getDataMap().putLong("DataStamp", System.currentTimeMillis());
         putDataMapRequest.getDataMap().putString("content", message);
-        Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest());
+        if(client != null) {
+            try {
+                Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest());
+            } catch (Exception ex) {
+                Log.e(Util.class.getSimpleName(), "", ex);
+            }
+        }
     }
 
     public static void informNewBeacon(final GoogleApiClient client, final String path, String uuid, String major, String minor) {

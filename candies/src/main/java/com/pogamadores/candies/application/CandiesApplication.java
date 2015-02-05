@@ -2,6 +2,9 @@ package com.pogamadores.candies.application;
 
 import android.app.Application;
 
+import com.pogamadores.candies.util.Util;
+
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -31,11 +34,9 @@ public class CandiesApplication extends Application
     }
 
     public boolean shouldNotificate() {
+        if(lastNotificationDate == null) return true;
 
-        return true;
-//        if(lastNotificationDate == null) return true;
-//
-//        Calendar calendar = Util.getDefaultIntervalCalendar(lastNotificationDate.getTime());
-//        return calendar.getTimeInMillis() >= System.currentTimeMillis();
+        Calendar calendar = Util.getDefaultIntervalCalendar(lastNotificationDate.getTime());
+        return calendar.getTimeInMillis() >= System.currentTimeMillis();
     }
 }

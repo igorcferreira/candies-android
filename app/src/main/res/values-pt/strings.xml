@@ -9,4 +9,5 @@
     <string name="get_token_generic_error">Um erro aconteceu. Por favor, tente novamente</string>
     <string name="title_activity_permission">Permissão</string>
     <string name="msg_success">Compra efetuada, retire seus doces</string>
+    <string name="msg_bluetooth">Este aplicativo precisa que seu bluetooth esteja ligado</string>
 </resources>

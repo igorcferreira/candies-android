@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataEvent;
@@ -95,7 +96,13 @@ public class Util {
         putDataMapRequest.getDataMap().putLong("DataStamp", System.currentTimeMillis());
         putDataMapRequest.getDataMap().putString("content", message);
 
-        Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest());
+        if(client != null) {
+            try {
+                Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest());
+            } catch (Exception ex) {
+                Log.e(Util.class.getSimpleName(), "", ex);
+            }
+        }
     }
 
     public static void requestPurchase(GoogleApiClient client, String path, Bundle extras) {

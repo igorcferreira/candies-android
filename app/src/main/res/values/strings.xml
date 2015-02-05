@@ -10,5 +10,6 @@
     <string name="title_activity_permission">Permission</string>
     <string name="get_token_generic_error">An unexpected error occur. Please, try again.</string>
     <string name="msg_success">Go get some candies! \\o/</string>
+    <string name="msg_bluetooth">This app needs your bluetooth on</string>
 
 </resources>
