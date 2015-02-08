@@ -1,4 +1,4 @@
-package com.pogamadores.candies.util;
+package br.com.novatrix.candies.util;
 
 public class Constants {
     public static final boolean LIVE_ENVIRONMENT = false;

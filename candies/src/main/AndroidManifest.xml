@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
-        android:name=".application.CandiesApplication"
+        android:name="br.com.novatrix.candies.application.CandiesApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -17,7 +17,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".ui.activity.MainActivity"
+            android:name="br.com.novatrix.candies.activity.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
         </activity>
 
         <service
-            android:name=".service.MessageService"
+            android:name="br.com.novatrix.candies.service.MessageService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -37,7 +37,7 @@
         </service>
 
         <receiver
-            android:name=".broadcast.CancelNotificationReceiver"
+            android:name="br.com.novatrix.candies.broadcast.CancelNotificationReceiver"
             android:enabled="true"
             android:exported="false" >
         </receiver>

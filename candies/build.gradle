@@ -6,7 +6,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.pogamadores.candies"
+        applicationId "br.com.novatrix.candies"
         minSdkVersion 20
         targetSdkVersion 21
         versionCode 5
