@@ -29,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * The {@link BeaconDiscoverService} will be responsible to look for new beacons and create the
  * notification flow
+ *
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
  */
 public class BeaconDiscoverService extends Service implements BeaconConsumer {
 

@@ -11,6 +11,8 @@ import java.net.URL;
 /**
  * An {@link com.android.volley.toolbox.HttpStack HttpStack} implementation which
  * uses OkHttp as its transport.
+ *
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
  */
 public class OkHttpStack extends HurlStack {
     private final OkUrlFactory mFactory;

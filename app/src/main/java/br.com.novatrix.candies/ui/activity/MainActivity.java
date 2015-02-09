@@ -16,6 +16,9 @@ import br.com.novatrix.candies.util.Util;
 
 import org.altbeacon.beacon.Beacon;
 
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class MainActivity extends ActionBarActivity {
 
     private int settingsTouch = 0;

@@ -17,6 +17,9 @@ import br.com.novatrix.candies.util.WebServerHelper;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class GsonRequest<T> extends Request<T> {
 
     private final Gson mGson = new Gson();

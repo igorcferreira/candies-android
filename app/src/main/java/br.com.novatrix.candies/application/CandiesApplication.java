@@ -26,7 +26,9 @@ import java.util.Date;
 
 import io.fabric.sdk.android.Fabric;
 
-
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class CandiesApplication extends Application {
 
     private static final String UNBIND_FLAG = "UNBIND_FLAG";

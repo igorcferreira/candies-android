@@ -9,6 +9,11 @@ import br.com.novatrix.candies.request.GsonRequest;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ * @author Jeff Prestes - github.com/jeffprestes - @igorcferreira
+ */
 public class WebServerHelper {
     public static final String SERVER_AUTHORITY = "novatrix.com.br";
     public static final String SERVER_URL = "https://www.novatrix.com.br/gateway";

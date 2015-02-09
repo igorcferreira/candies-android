@@ -25,6 +25,9 @@ import br.com.novatrix.candies.util.CandiesWebViewClient;
 import br.com.novatrix.candies.util.Util;
 import br.com.novatrix.candies.util.WebServerHelper;
 
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class PermissionActivity extends ActionBarActivity {
 
     private WebView webContent;

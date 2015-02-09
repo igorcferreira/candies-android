@@ -1,5 +1,8 @@
 package br.com.novatrix.candies.util;
 
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class IntentParameters
 {
     public static final String UUID = "UUID";

@@ -6,6 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import br.com.novatrix.candies.domain.Token;
 
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class CandieSQLiteHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "candies.db";

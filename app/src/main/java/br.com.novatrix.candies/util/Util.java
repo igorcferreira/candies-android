@@ -27,6 +27,10 @@ import org.altbeacon.beacon.Beacon;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ * @author Jeff Prestes - github.com/jeffprestes - @jeffprestes
+ */
 public class Util
 {
     public static final int NOTIFICATION_ID = 123456;

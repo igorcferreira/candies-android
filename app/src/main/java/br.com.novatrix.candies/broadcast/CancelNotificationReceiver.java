@@ -7,6 +7,9 @@ import android.content.Intent;
 import br.com.novatrix.candies.application.CandiesApplication;
 import br.com.novatrix.candies.util.Util;
 
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class CancelNotificationReceiver extends BroadcastReceiver {
     public CancelNotificationReceiver(){}
     @Override

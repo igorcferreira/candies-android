@@ -19,6 +19,9 @@ import br.com.novatrix.candies.util.WebServerHelper;
 import java.util.Calendar;
 
 
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class PaymentService extends Service {
 
     private LocalBinder mBinder = new LocalBinder();

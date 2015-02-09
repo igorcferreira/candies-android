@@ -11,6 +11,9 @@ import android.webkit.WebViewClient;
 
 import java.lang.ref.WeakReference;
 
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class CandiesWebViewClient extends WebViewClient {
 
     private OnProcessStepListener onProcessStepListener;

@@ -32,6 +32,8 @@ import org.altbeacon.beacon.Beacon;
 
 /**
  * A simple {@link android.app.Fragment} subclass.
+ *
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
  */
 public class MainFragment extends Fragment {
 

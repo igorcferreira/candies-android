@@ -15,6 +15,9 @@ import br.com.novatrix.candies.util.Util;
 
 /**
  * This class are responsible to perform the payment for the item
+ *
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
  */
 public class PaymentOrderReceiver extends BroadcastReceiver {
 

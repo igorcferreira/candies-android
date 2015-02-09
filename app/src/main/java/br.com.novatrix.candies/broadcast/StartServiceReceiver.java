@@ -8,6 +8,8 @@ import br.com.novatrix.candies.service.BeaconDiscoverService;
 
 /**
  * It will be responsible to start the {@link BeaconDiscoverService} when needed
+ *
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
  */
 public class StartServiceReceiver extends BroadcastReceiver {
 
