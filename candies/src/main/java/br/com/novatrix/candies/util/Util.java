@@ -27,7 +27,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class Util {
+
     public static final int NOTIFICATION_ID = 23156;
 
     public static void cancelNotification(Context context)

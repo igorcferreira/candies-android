@@ -22,6 +22,9 @@ import br.com.novatrix.candies.util.IntentParameters;
 import br.com.novatrix.candies.util.RequestCode;
 import br.com.novatrix.candies.util.Util;
 
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class MainActivity extends Activity implements DataApi.DataListener {
 
     private TextView mTextView;

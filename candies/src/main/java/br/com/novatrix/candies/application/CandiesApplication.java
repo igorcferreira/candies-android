@@ -7,8 +7,9 @@ import br.com.novatrix.candies.util.Util;
 import java.util.Calendar;
 import java.util.Date;
 
+
 /**
- * Created by igorcferreira on 2/1/15.
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
  */
 public class CandiesApplication extends Application
 {

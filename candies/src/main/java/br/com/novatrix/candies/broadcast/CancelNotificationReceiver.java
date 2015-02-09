@@ -10,6 +10,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
 import br.com.novatrix.candies.util.Util;
 
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class CancelNotificationReceiver extends BroadcastReceiver {
 
 

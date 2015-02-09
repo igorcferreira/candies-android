@@ -16,6 +16,9 @@ import br.com.novatrix.candies.util.Util;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
+ */
 public class MessageService extends WearableListenerService {
 
     private static final String TAG = MessageService.class.getSimpleName();
