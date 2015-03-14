@@ -18,7 +18,7 @@ import br.com.novatrix.candies.util.Util;
  *
  * @author Igor Castañeda Ferreira - github.com/igorcferreira - @igorcferreira
  */
- */
+
 public class PaymentOrderReceiver extends BroadcastReceiver {
 
     public PaymentOrderReceiver() {}
