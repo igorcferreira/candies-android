@@ -18,7 +18,7 @@ import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
-import com.pogamadores.candies.R;
+import br.com.novatrix.candies.R;
 import br.com.novatrix.candies.application.CandiesApplication;
 import br.com.novatrix.candies.broadcast.CancelNotificationReceiver;
 import br.com.novatrix.candies.activity.MainActivity;
@@ -44,10 +44,12 @@ public class Util {
 
     public static void dispatchNotification(Context context, Uri uri) {
 
-        if(!CandiesApplication.get().shouldNotificate())
+        /*
+        if(!CandiesApplication.get().shouldNotificate()) {
             return;
-
+        }
         CandiesApplication.get().setLastNotificationDate(new Date());
+        */
 
         Bundle infoBundle = new Bundle();
         infoBundle.putString(IntentParameters.UUID, uri.getQueryParameter("uuid"));

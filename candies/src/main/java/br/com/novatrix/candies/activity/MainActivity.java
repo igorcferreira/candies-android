@@ -17,7 +17,7 @@ import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.Wearable;
-import com.pogamadores.candies.R;
+import br.com.novatrix.candies.R;
 import br.com.novatrix.candies.util.IntentParameters;
 import br.com.novatrix.candies.util.RequestCode;
 import br.com.novatrix.candies.util.Util;

@@ -117,7 +117,7 @@ public class Util
             try {
                 Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest());
             } catch (Exception ex) {
-                Log.e(Util.class.getSimpleName(), "", ex);
+                Log.e(Util.class.getSimpleName(), "Error when send message to watch", ex);
             }
         }
     }
@@ -149,10 +149,11 @@ public class Util
         );
     }
 
+    //TODO: Change it for live
     public static Calendar getDefaultIntervalCalendar(long initialTime) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(initialTime);
-        calendar.set(Calendar.MINUTE, 30);
+        calendar.set(Calendar.SECOND, 30);
 
         return calendar;
     }

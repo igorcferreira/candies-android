@@ -52,9 +52,12 @@ public class MessageService extends WearableListenerService {
         for(DataEvent event : dataEvents) {
 
             if(event.getType() == DataEvent.TYPE_CHANGED) {
+                Log.d("CandiesApplicationWatch", "Message arrived");
                 String message = Util.extractMessage(event,"/new/candies/beacon");
-                if(message != null && !Util.isForeground(getApplicationContext(), "com.pogamadores.candies")) {
-                    Log.d(TAG, message);
+
+                Log.d("CandiesApplicationWatch", "content of message: " + message);
+
+                if(message != null && !Util.isForeground(getApplicationContext(), "br.com.novatrix.candies")) {
                     Uri uri = Uri.parse(message);
                     Util.dispatchNotification(getApplicationContext(), uri);
                     return;
@@ -67,6 +70,7 @@ public class MessageService extends WearableListenerService {
             }
         }
 
+        dataEvents.close();
     }
 
     @Override

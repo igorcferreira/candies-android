@@ -14,7 +14,7 @@
         android:required="true" />
 
     <application
-        android:name=".application.CandiesApplication"
+        android:name="br.com.novatrix.candies.application.CandiesApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

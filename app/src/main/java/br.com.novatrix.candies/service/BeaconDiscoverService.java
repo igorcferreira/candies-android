@@ -57,12 +57,16 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
     private void configBeaconManager() {
         if(beaconManager == null) {
             beaconManager = BeaconManager.getInstanceForApplication(CandiesApplication.get());
+
             if (beaconManager.getBeaconParsers() != null && beaconManager.getBeaconParsers().size() == 1) {
                 beaconManager.getBeaconParsers().add(new BeaconParser().
                         setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
             }
+
             try {
                 beaconManager.bind(this);
+                // set the duration of the scan to be 1.1 seconds
+                beaconManager.setBackgroundScanPeriod(5100l);
             } catch (Exception error) {
                 Log.e(TAG, "Beacon manager bind error", error);
             }
@@ -89,7 +93,9 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
     public void onDestroy() {
         if(beaconManager != null) {
             try {
-                if(region != null) beaconManager.stopRangingBeaconsInRegion(region);
+                if(region != null && region.getUniqueId() != null) {
+                    beaconManager.stopRangingBeaconsInRegion(region);
+                }
             } catch (Exception ignored) {
                 Log.e(TAG, "Beacon Manager Error", ignored);
             }
@@ -160,6 +166,7 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 for (Beacon rangedBeacon : beacons) {
                     if (application.getBeacon() == null) {
+                        Log.d("CandiesBeaconRangening", rangedBeacon.getRssi() + ": " + rangedBeacon.describeContents());
                         if (rangedBeacon.getDistance() > 5.f)
                             continue;
                         if(!Util.isMyBeacon(rangedBeacon))

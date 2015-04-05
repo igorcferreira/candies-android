@@ -20,6 +20,7 @@ import br.com.novatrix.candies.util.OkHttpStack;
 import br.com.novatrix.candies.util.Util;
 
 import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -39,6 +40,7 @@ public class CandiesApplication extends Application {
     private Beacon beacon;
     private Date lastNotificationDate;
     private static GoogleApiClient mGoogleClient;
+    private BackgroundPowerSaver backgroundPowerSaver;
 
     public Beacon getBeacon() {
         return beacon;
@@ -54,8 +56,9 @@ public class CandiesApplication extends Application {
         Fabric.with(this, new Crashlytics());
         app = this;
         dataSource = new CandieSQLiteDataSource(app);
-        if(!Util.isServiceRunning(BeaconDiscoverService.class, getApplicationContext()))
+        if(!Util.isServiceRunning(BeaconDiscoverService.class, getApplicationContext())) {
             startService(new Intent(getApplicationContext(), BeaconDiscoverService.class));
+        }
     }
 
     private static void setUpGoogleClientIfNeeded() {
