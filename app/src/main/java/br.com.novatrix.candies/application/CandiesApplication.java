@@ -17,10 +17,12 @@ import com.google.android.gms.wearable.Wearable;
 import br.com.novatrix.candies.database.CandieSQLiteDataSource;
 import br.com.novatrix.candies.service.BeaconDiscoverService;
 import br.com.novatrix.candies.util.OkHttpStack;
+import br.com.novatrix.candies.util.SimpleMqttClient;
 import br.com.novatrix.candies.util.Util;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -35,12 +37,41 @@ public class CandiesApplication extends Application {
     private static final String UNBIND_FLAG = "UNBIND_FLAG";
     private CandieSQLiteDataSource dataSource;
     private static CandiesApplication app;
+    private static SimpleMqttClient mqttClient;
 
     private RequestQueue queue;
     private Beacon beacon;
     private Date lastNotificationDate;
     private static GoogleApiClient mGoogleClient;
     private BackgroundPowerSaver backgroundPowerSaver;
+
+
+    @Override
+    public void onCreate() {
+
+        super.onCreate();
+
+        Fabric.with(this, new Crashlytics());
+
+        app = this;
+
+        dataSource = new CandieSQLiteDataSource(app);
+
+        if(!Util.isServiceRunning(BeaconDiscoverService.class, getApplicationContext())) {
+            startService(new Intent(getApplicationContext(), BeaconDiscoverService.class));
+        }
+
+        mqttClient = new SimpleMqttClient();
+    }
+
+
+    /**
+     * Get MQTT Client for Candies Systems
+     * @return MQTT Client connected to Candies topic
+     */
+    public static SimpleMqttClient getMqttClient()   {
+        return mqttClient;
+    }
 
     public Beacon getBeacon() {
         return beacon;
@@ -50,16 +81,6 @@ public class CandiesApplication extends Application {
         this.beacon = beacon;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Fabric.with(this, new Crashlytics());
-        app = this;
-        dataSource = new CandieSQLiteDataSource(app);
-        if(!Util.isServiceRunning(BeaconDiscoverService.class, getApplicationContext())) {
-            startService(new Intent(getApplicationContext(), BeaconDiscoverService.class));
-        }
-    }
 
     private static void setUpGoogleClientIfNeeded() {
         if(mGoogleClient == null) {
@@ -188,5 +209,11 @@ public class CandiesApplication extends Application {
 
         Calendar calendar = Util.getDefaultIntervalCalendar(lastNotificationDate.getTime());
         return calendar.getTimeInMillis() >= System.currentTimeMillis() && !CandiesApplication.get().isFromUnbind();
+    }
+
+    @Override
+    public void onTerminate() {
+        mqttClient.disconnect();
+        super.onTerminate();
     }
 }

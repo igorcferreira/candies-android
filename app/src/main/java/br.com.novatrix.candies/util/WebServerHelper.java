@@ -52,6 +52,7 @@ public class WebServerHelper {
     }
 
     public static void sendMachineOrder(Token token, Response.Listener<NewTransaction> successResponse, Response.ErrorListener errorResponse) {
+
         CandiesApplication.get().addRequestToQueue(new GsonRequest<>(
                 WebServerHelper.ORDER_MACHINE_PATH,
                 WebServerHelper.getMachineOrderPost(token.getToken()),
@@ -59,6 +60,8 @@ public class WebServerHelper {
                 errorResponse,
                 NewTransaction.class
         ));
+
+        CandiesApplication.getMqttClient().publish("releasemqtt");
     }
 
     public static void requestNewToken(Response.Listener<Token> successResponse, Response.ErrorListener errorResponse) {
