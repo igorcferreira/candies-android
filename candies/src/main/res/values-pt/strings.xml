@@ -3,7 +3,7 @@
     <string name="hello_round">Olá mundo redondo!</string>
     <string name="hello_square">Olá mundo quadrado!</string>
     <string name="action_purchase">Comprar</string>
-    <string name="notification_generic_message">Há uma máquina de doces próximo! Aproveite!</string>
+    <string name="notification_generic_message">Há uma máquina de doces próxima! Aproveite!</string>
     <string name="notification_generic_title">Doce</string>
     <string name="msg_error">Erro na compra. Por favor, tente novamente pelo seu celular</string>
     <string name="msg_look_up">Aproxime-se de uma máquina</string>
