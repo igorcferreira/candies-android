@@ -98,34 +98,18 @@ public class PaymentService extends Service {
         return new Response.Listener<NewTransaction>() {
 
             public void onResponse (NewTransaction response)    {
-                if (response.isSuccessfull()) {
-
-                    WebServerHelper.sendMachineOrder(
-                            token,
-                            new Response.Listener<NewTransaction>() {
-
-                                @Override
-                                public void onResponse(NewTransaction response) {
-                                    if(response.isSuccessfull()) {
-                                        Util.sendMessage(
-                                                CandiesApplication.getGoogleClient(),
-                                                "/candies/payment",
-                                                "success"
-                                        );
-                                        finishService("Doce sendo liberado...", true);
-                                    } else {
-                                        finishService("Erro no comando à maquina.", false);
-                                    }
-                                }
-                            },
-                            new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Log.e(PaymentService.class.getSimpleName(), "Erro no envio à máquina", error);
-                                    finishService(Log.getStackTraceString(error), false);
-                                }
-                            }
-                    );
+                if (response.isSuccessfull())   {
+                    if (CandiesApplication.getMqttClient().publish("release"))      {
+                        Util.sendMessage(
+                                CandiesApplication.getGoogleClient(),
+                                "/candies/payment",
+                                "success"
+                        );
+                        finishService("Doce sendo liberado...", true);
+                    }   else    {
+                        finishService("Erro no comando à maquina.", false);
+                        Log.e(PaymentService.class.getSimpleName(), "Erro no envio à máquina");
+                    }
                 } else {
                     finishService(response.getMessage(), false);
                 }

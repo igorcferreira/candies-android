@@ -166,7 +166,7 @@ public class BeaconDiscoverService extends Service implements BeaconConsumer {
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 for (Beacon rangedBeacon : beacons) {
                     if (application.getBeacon() == null) {
-                        Log.d("CandiesBeaconRangening", rangedBeacon.getRssi() + ": " + rangedBeacon.describeContents());
+                        Log.i("CandiesBeaconRange", rangedBeacon.getBluetoothName() + ": " + rangedBeacon.getBluetoothAddress() + " - " + rangedBeacon.getRssi() + ": " + rangedBeacon.describeContents());
                         if (rangedBeacon.getDistance() > 5.f)
                             continue;
                         if(!Util.isMyBeacon(rangedBeacon))

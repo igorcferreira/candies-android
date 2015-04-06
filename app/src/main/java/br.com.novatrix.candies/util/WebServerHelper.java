@@ -61,7 +61,7 @@ public class WebServerHelper {
                 NewTransaction.class
         ));
 
-        CandiesApplication.getMqttClient().publish("releasemqtt");
+
     }
 
     public static void requestNewToken(Response.Listener<Token> successResponse, Response.ErrorListener errorResponse) {

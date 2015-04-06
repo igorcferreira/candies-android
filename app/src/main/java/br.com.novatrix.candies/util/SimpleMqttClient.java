@@ -70,8 +70,11 @@ public class SimpleMqttClient {
 
         boolean retorno = false;
 
+        Log.i("SimpleMqttClient", "1 - Publishing message : [" + msg + "] at: " + TOPIC + " at " + BROKER_URL);
+
         if (!mqttClient.isConnected())      {
             this.connect();
+            Log.i("SimpleMqttClient", "2 - Publishing message : [" + msg + "] at: " + TOPIC + " at " + BROKER_URL);
         }
 
         if (mqttClient.isConnected()) {
@@ -80,7 +83,7 @@ public class SimpleMqttClient {
             message.setRetained(false);
 
             // Publish the message
-            Log.d("SimpleMqttClient", "Publishing message : [" + msg + "] at: " + TOPIC + " at " + BROKER_URL);
+            Log.i("SimpleMqttClient", "3 - Publishing message : [" + msg + "] at: " + TOPIC + " at " + BROKER_URL);
 
             MqttDeliveryToken token = null;
             try {
@@ -89,6 +92,7 @@ public class SimpleMqttClient {
                 // Wait until the message has been delivered to the broker
                 token.waitForCompletion();
                 Thread.sleep(100);
+                Log.i("SimpleMqttClient", "4 - Publishing message : [" + msg + "] at: " + TOPIC + " at " + BROKER_URL);
                 retorno = true;
 
             } catch (Exception ex) {
